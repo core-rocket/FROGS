@@ -1,6 +1,6 @@
 function [] = FROGSparameters
 % FROGS
-% ver1.4.1 (181124created)
+% ver1.7 (190328edited)
 %
 % Parameter Setting
 %
@@ -9,7 +9,7 @@ global l lcg0 lcgf lcgp lcp d m0 mf I0 If
 global Cd Cnalpha Vpara1 Vpara2 Hpara
 global LeleDeg LazDeg lLnchr
 global WindModel dt n Cdv Zr WazDeg Vwaz
-global PMT Dpara
+global PMT Dpara HeightH VwazH WazDegH ZrH CdvH
 
 FROGSparain;        % parain‚Ì“Ç‚Ýž‚Ý
 % length [m]
@@ -36,27 +36,33 @@ Cnalpha  = PMT(12);      % normal force coefficient
 % parachute
 Vpara1   = PMT(13);      % falling velocity of 1st parachute [m/s]
 Vpara2   = PMT(14);      % falling velocity of 2nd parachute[m/s]
-Hpara    = 300;          % 2nd parachute's deployment altitude  [m]
-Dpara    = 1.0;         % para delay [s]
+Hpara    = 0;          % 2nd parachute's deployment altitude  [m]
+Dpara    = 1.5;         % para delay [s]
 
 % launcher
 LeleDeg  = 70;           % angle of elevation (vertical=90deg) [deg]
-LazDeg   = 0;          % azimuth (east=0deg / south=270deg) [deg]
-lLnchr   = 5.0;          % length [m]
+LazDeg   = 300;          % azimuth (east=0deg / south=270deg) [deg]
+lLnchr   = 5;          % length [m]
 
 % wind
 WindModel= 1;            % model of wind speed
-                         % 1:power model / 2:uniformity
+                         % 1:power model / 2:uniformity / 3:ã‹ó•—
 Cdv      = 6.0;          % coefficient [-]
                          % in case of WindModel=1
-WazDeg   = 180;            % azimuth of wind [deg]
+WazDeg   = 240;            % azimuth of wind [deg]
                          % east=0deg / south=270deg
-Vwaz     = 7;            % wind speed [m/s]
-Zr       = 5;            % altitude anemometer located  [m]
+Vwaz     = 3.8;            % wind speed [m/s]
+Zr       = 2;            % altitude anemometer located  [m]
 
+%Higher
+HeightH = 1000;         %ã‹ó•—‚“x
+VwazH   = 10;           %ã‹ó•—•—‘¬
+WazDegH = 210;          %ã‹ó•—‚Ì‚­Œü‚«(120>30>210)
+ZrH     = 1000;
+CdvH    = 6.0;
 % simulation
 dt       = 0.01;         % simulation step [s]
                          % MUST BE 0.01s OR LESS!!!
-n        = 10000;        % maximum nunber of simulation steps [-]
+n        = 30000;        % maximum nunber of simulation steps [-]
                          % if the rocket doesn't reach the ground,
                          % change 'n' to bigger one.

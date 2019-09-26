@@ -1,5 +1,5 @@
 % FROGS
-% ver1.5 (190118edited)
+% ver1.7 (190328edited)
 %
 % main
 %
@@ -11,11 +11,11 @@ close all
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
-global S SIMULATION Dpara
+global S SIMULATION Dpara HeightH VwazH WazH
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 3=Ballistic fall，4=Retarding fall 5=Delay time
-SIMULATION  = 4;
+SIMULATION  = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
@@ -81,7 +81,17 @@ switch(WindModel)
                   Vwaz*((Xe(3)/Zr)^(1/Cdv))*sin(Waz);0];
         end
     case 2
-        Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];             %一様風速
+        Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];             
+    case 3  % 上空風
+        if i==1                                           %ステップが1の時は高度0mなので計測値のまま
+            Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];
+        elseif Xe(3)>=HeightH
+            Vw = [VwazH*cos(WazH);...                     %上空風(一様風)
+                  VwazH*sin(WazH);0];
+        else
+            Vw = [Vwaz*((Xe(3)/Zr)^(1/Cdv))*cos(Waz);...  %べき法則
+                  Vwaz*((Xe(3)/Zr)^(1/Cdv))*sin(Waz);0];
+        end
 end
 
 % airspeed [m/s](対気速度)

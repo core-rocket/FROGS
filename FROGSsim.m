@@ -1,5 +1,5 @@
 % FROGS
-% ver1.3 (181117edited)
+% ver1.7 (190328edited)
 %
 % main
 %
@@ -11,11 +11,11 @@ close all
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
-global Vwaz Waz S SIMULATION Dpara
+global Vwaz Waz S SIMULATION Dpara WazDeg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 1=Ballistic fall 2=Retarding fall 3=Delay time
-SIMULATION  = 2;
+SIMULATION  = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
@@ -73,7 +73,17 @@ switch(WindModel)
                   Vwaz*((Xe(3)/Zr)^(1/Cdv))*sin(Waz);0];
         end
     case 2
-        Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];             %一様風速
+        Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];             
+    case 3  % 上空風
+        if i==1                                           %ステップが1の時は高度0mなので計測値のまま
+            Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];
+        elseif Xe(3)>=HeightH
+            Vw = [VwazH*cos(WazH);...                     %上空風(一様風)
+                  VwazH*sin(WazH);0];
+        else
+            Vw = [Vwaz*((Xe(3)/Zr)^(1/Cdv))*cos(Waz);...  %べき法則
+                  Vwaz*((Xe(3)/Zr)^(1/Cdv))*sin(Waz);0];
+        end
 end
 
 % airspeed [m/s](対気速度)
@@ -204,6 +214,13 @@ q = (0.5*qmat*q*dt+q)/norm(q);
 the = asin(Aeb(1,3));
 psi = atan(Aeb(1,2)/Aeb(1,1));
 
+% ランチクリア速度
+if (Xe(3)<lLnchr) && (t<tThrust)
+    Vlc = Ve(3);
+else
+    Vlc = 0;
+end
+
 % log
 log_t(1,i)     = t;
 log_T(1,i)     = T;
@@ -228,6 +245,7 @@ log_omg(:,i)   = omg*180/pi;
 log_q(:,i)     = q;
 log_the(1,i)   = the*180/pi;
 log_psi(1,i)   = psi*180/pi;
+log_Vlc(1,i)   = Vlc;
 %
 
 if (real(log_Xe(3,i))<0)&&(log_t(1,i)>tThrust)
@@ -237,47 +255,61 @@ end
 
 % plot
 figure
-plot(log_t(1,:),log_Xe(1,:),'r',log_t(1,:),log_Xe(2,:),'b',...
-    log_t(1,:),log_Xe(3,:),'g')
+plot(log_t(1,:),real(log_Xe(1,:)),'r',log_t(1,:),real(log_Xe(2,:)),'b',...
+    log_t(1,:),real(log_Xe(3,:)),'g')
 xlabel('Time, t [sec]');
 ylabel('Distance, Xe [m]');
 legend('Xe(1)','Xe(2)','Xe(3)');
-
+ 
 figure
-plot(log_t(1,:),log_Ve(1,:),'r',log_t(1,:),log_Ve(2,:),'b',...
-    log_t(1,:),log_Ve(3,:),'g')
+plot(log_t(1,:),real(log_Ve(1,:)),'r',log_t(1,:),real(log_Ve(2,:)),'b',...
+    log_t(1,:),real(log_Ve(3,:)),'g')
 xlabel('Time, t [sec]');
 ylabel('Velocity, Ve [m/s]');
 legend('Ve(1)','Ve(2)','Ve(3)');
-
+ 
 figure
 plot(log_t(1,:),real(log_the(1,:)),'r',log_t(1,:),real(log_psi(1,:)),'b')
 xlabel('Time, t [sec]');
 ylabel('Attitude Angle [deg]');
 legend('the','psi');
-
+ 
 figure
-plot(log_t(1,:),log_omg(2,:),'r',log_t(1,:),log_omg(3,:),'b')
+plot(log_t(1,:),real(log_omg(2,:)),'r',log_t(1,:),real(log_omg(3,:)),'b')
 xlabel('Time, t [sec]');
 ylabel('Angular Velocity, [deg/s]');
 legend('pitch (omg(2))','yaw (omg(3))');
-
+ 
 figure
-plot(log_t(1,:),log_alpha(1,:),'r',log_t(1,:),log_bet(1,:),'b')
+plot(log_t(1,:),real(log_alpha(1,:)),'r',log_t(1,:),real(log_bet(1,:)),'b')
 xlabel('Time, t [sec]');
 ylabel('Angle [deg]');
 legend('Angle of Attack (alpha)','Angle of Sideslip (bet)');
-
+ 
 figure
-plot(log_t(1,:),log_D(1,:),'r',log_t(1,:),log_N(1,:),'b',...
-    log_t(1,:),log_Y(1,:),'g');
+plot(log_t(1,:),real(log_D(1,:)),'r',log_t(1,:),real(log_N(1,:)),'b',...
+    log_t(1,:),real(log_Y(1,:)),'g');
 xlabel('Time, t [sec]');
 ylabel('Force [N]');
 legend('Drag (D)','Normal Force (N)','Side Force (Y)');
-
+ 
 figure
-plot(log_t(1,:),log_Vab(1,:),'r',log_t(1,:),log_Vab(2,:),'b',...
-    log_t(1,:),log_Vab(3,:),'g')
+plot(log_t(1,:),real(log_Vab(1,:)),'r',log_t(1,:),real(log_Vab(2,:)),'b',...
+    log_t(1,:),real(log_Vab(3,:)),'g')
 xlabel('Time, t [sec]');
 ylabel('Air Speed, Va [m/s]');
 legend('Vab(1)','Vab(2)','Vab(3)');
+
+figure
+plot3(real(log_Xe(1,:)),real(log_Xe(2,:)),real(log_Xe(3,:)));
+xlabel('東西 [m]')
+ylabel('北南 [m]')
+grid on
+
+% display
+fprintf('ver1.6：MODE#%d\n',SIMULATION)
+fprintf('風向：%ddeg，風速%dm/s\n',WazDeg,Vwaz);
+fprintf('下段燃焼時間：%.2fs，頂点到達時間%.2fs\n',tThrust,tmax*dt);
+fprintf('最高到達高度：%fm\n',max(log_Xe(3,:)));
+fprintf('最高対気速度：%fm/s\n',max(log_Va(1,:)));
+fprintf('ロンチャ離脱速度：%fm/s\n',max(log_Vlc(1,:)));
