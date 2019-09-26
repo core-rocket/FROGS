@@ -11,7 +11,7 @@ global LeleDeg LazDeg lLnchr
 global WindModel dt n Cdv Zr WazDeg Vwaz
 global PMT Dpara HeightH
 
-FROGSparain;        % parainの読み込み
+FROGSparain;        % parain縺ｮ隱ｭ縺ｿ霎ｼ縺ｿ
 % length [m]
 l        = PMT(1);       % total length
 d        = PMT(2);       % outer diameter
@@ -46,7 +46,7 @@ lLnchr   = 5;          % length [m]
 
 % wind
 WindModel= 3;            % model of wind speed
-                         % 1:power model / 2:uniformity / 3:統計風
+                         % 1:power model / 2:uniformity / 3:邨ｱ險磯｢ｨ
 Cdv      = 2.0;          % coefficient [-]
                          % in case of WindModel=1
 WazDeg   = 180;            % azimuth of wind [deg]
@@ -54,7 +54,7 @@ WazDeg   = 180;            % azimuth of wind [deg]
 Vwaz     = 2;            % wind speed [m/s]
 Zr       = 5;            % altitude anemometer located  [m]
 
-HeightH  = 90;           %風データ最低高度[m]
+HeightH  = 90;           %鬚ｨ繝�繝ｼ繧ｿ譛菴朱ｫ伜ｺｦ[m]
 
 % simulation
 dt       = 0.01;         % simulation step [s]

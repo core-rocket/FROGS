@@ -7,33 +7,33 @@
 %
 clear;
 close all
-% •Ï”‚ÌéŒ¾
+% å¤‰æ•°ã®å®£è¨€
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
 global Vwaz Waz S SIMULATION Dpara WazDeg HeightH
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Choose the type of simulation(’e“¹orŒ¸‘¬)
+%%% Choose the type of simulation(å¼¾é“oræ¸›é€Ÿ)
 %%% 1=Ballistic fall 2=Retarding fall 3=Delay time
 SIMULATION  = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FROGSparameters;        % parameter‚Ì“Ç‚İ‚İ
-FROGSthrust;            % thrustƒf[ƒ^‚Ì“Ç‚İ‚İ
+FROGSparameters;        % parameterã®èª­ã¿è¾¼ã¿
+FROGSthrust;            % thrustãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿
 [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4]  = FROGSprset;
 IV  = [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4];
-Ve  = [IV(1); IV(2); IV(3)];            %’n‹…À•WŒn‚É‚¨‚¯‚é‹@‘Ì‘¬“xƒxƒNƒgƒ‹
-Xe  = [IV(4); IV(5); IV(6)];            %’n‹…À•WŒn‚É‚¨‚¯‚é‹@‘ÌˆÊ’uƒxƒNƒgƒ‹
-omg = [0; IV(7); IV(8)];                %Šp‘¬“x
-q   = [IV(9); IV(10); IV(11); IV(12)];  %ƒNƒH[ƒ^ƒjƒIƒ“
+Ve  = [IV(1); IV(2); IV(3)];            %åœ°çƒåº§æ¨™ç³»ã«ãŠã‘ã‚‹æ©Ÿä½“é€Ÿåº¦ãƒ™ã‚¯ãƒˆãƒ«
+Xe  = [IV(4); IV(5); IV(6)];            %åœ°çƒåº§æ¨™ç³»ã«ãŠã‘ã‚‹æ©Ÿä½“ä½ç½®ãƒ™ã‚¯ãƒˆãƒ«
+omg = [0; IV(7); IV(8)];                %è§’é€Ÿåº¦
+q   = [IV(9); IV(10); IV(11); IV(12)];  %ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
 Winddata = readmatrix('Winddata3.csv');
-i = 1;                                  %ƒXƒeƒbƒv”
-t = 0;                                  %ŠÔ
+i = 1;                                  %ã‚¹ãƒ†ãƒƒãƒ—æ•°
+t = 0;                                  %æ™‚é–“
 %%%
-for i = 1:n                             % 1~n‚Ü‚ÅŒJ‚è•Ô‚µŒvZ
+for i = 1:n                             % 1â€¾nã¾ã§ç¹°ã‚Šè¿”ã—è¨ˆç®—
 t = i*dt;                               % time [s]
 
-% transformation matrix(earth frame --> body frame)(À•W•ÏŠ·s—ñ)(’nãÀ•WŒn‚ğ‹@‘ÌÀ•WŒn‚Ö)
+% transformation matrix(earth frame --> body frame)(åº§æ¨™å¤‰æ›è¡Œåˆ—)(åœ°ä¸Šåº§æ¨™ç³»ã‚’æ©Ÿä½“åº§æ¨™ç³»ã¸)
 Aeb=[1-2*((q(2)^2)+(q(3)^2)),...
     2*(q(1)*q(2)+q(3)*q(4)),2*(q(3)*q(1)-q(2)*q(4));
     2*(q(1)*q(2)-q(3)*q(4)),1-2*((q(1)^2)+(q(3)^2)),...
@@ -41,13 +41,13 @@ Aeb=[1-2*((q(2)^2)+(q(3)^2)),...
     2*(q(3)*q(1)+q(2)*q(4)),2*(q(2)*q(3)-q(1)*q(4)),...
     1-2*((q(1)^2)+(q(2)^2))];
 
-if t<tThrust                                % ”RÄ’†‚Ì”òãÄ
+if t<tThrust                                % ç‡ƒç„¼ä¸­ã®é£›ç¿”
     T       = thrust(i);                    % thrust [N]
     mdot    = (m0-mf)/tThrust;              % weight loss [kg/sec]
     m       = m0-mdot*t;                    % weight [kg]
     I       = I0-(I0-If)/tThrust*t;         % moment of inertia [kgm^2]
     lcg     = lcg0-(lcg0-lcgf)/tThrust*t;   % center of gravity [m]
-else                                        % ”RÄI—¹Œã
+else                                        % ç‡ƒç„¼çµ‚äº†å¾Œ
     T       = 0;                            % thrust [N]
     mdot    = 0;                            % weight loss [kg/sec]
     m       = mf;                           % weight [kg]
@@ -58,7 +58,7 @@ end
 %rho = 1.23-(0.11e-3)*Xe(3);                 % atmospheric density
                                             % Don't use this equation over 2km
 r0=6356766;
-H = (r0*Xe(3)*0.001)/(r0+Xe(3)*0.001);       % ƒWƒIƒ|ƒeƒ“ƒVƒƒƒ‹‚“x
+H = (r0*Xe(3)*0.001)/(r0+Xe(3)*0.001);       % ã‚¸ã‚ªãƒãƒ†ãƒ³ã‚·ãƒ£ãƒ«é«˜åº¦
 Temp = 15 - 6.5*H;
 P =101325 * (288.15./(Temp +273.15)).^(-5.256);
 rho = (0.0034837*P)/(Temp+273.15);       % Don't use this equation over 11km
@@ -66,16 +66,16 @@ rho = (0.0034837*P)/(Temp+273.15);       % Don't use this equation over 11km
                                             
 % wind
 switch(WindModel)
-    case 1                                                %‚×‚«æ‘¥
-        if i==1                                           %ƒXƒeƒbƒv‚ª1‚Ì‚Í‚“x0m‚È‚Ì‚Åd•û‚È‚­Œv‘ª‚µ‚½•—‘¬‚»‚Ì‚Ü‚Ü—˜—p
+    case 1                                                %ã¹ãä¹—å‰‡
+        if i==1                                           %ã‚¹ãƒ†ãƒƒãƒ—ãŒ1ã®æ™‚ã¯é«˜åº¦0mãªã®ã§ä»•æ–¹ãªãè¨ˆæ¸¬ã—ãŸé¢¨é€Ÿãã®ã¾ã¾åˆ©ç”¨
             Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];
         else
-            Vw = [Vwaz*((Xe(3)/Zr)^(1/Cdv))*cos(Waz);...  %‚×‚«–@‘¥‚ÉŠî‚Ã‚¢‚½ŒvZ
+            Vw = [Vwaz*((Xe(3)/Zr)^(1/Cdv))*cos(Waz);...  %ã¹ãæ³•å‰‡ã«åŸºã¥ã„ãŸè¨ˆç®—
                   Vwaz*((Xe(3)/Zr)^(1/Cdv))*sin(Waz);0];
         end
     case 2
         Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];             
-    case 3                                                % “Œv•—
+    case 3                                                % çµ±è¨ˆé¢¨
         if i==1
             Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];
         elseif Xe(3)>=HeightH
@@ -96,13 +96,13 @@ switch(WindModel)
         end 
 end
 
-% airspeed [m/s](‘Î‹C‘¬“x)
+% airspeed [m/s](å¯¾æ°—é€Ÿåº¦)
 Vab = Aeb*(Ve-Vw);
 Va = norm(Vab);
-% Ve:’n‹…À•WŒn(earth frame)‚É‚¨‚¯‚é‹@‘Ì‘¬“xƒxƒNƒgƒ‹
-% Vw:’n‹…À•WŒn(earth frame)‚É‚¨‚¯‚é•—‘¬ƒxƒNƒgƒ‹ 
+% Ve:åœ°çƒåº§æ¨™ç³»(earth frame)ã«ãŠã‘ã‚‹æ©Ÿä½“é€Ÿåº¦ãƒ™ã‚¯ãƒˆãƒ«
+% Vw:åœ°çƒåº§æ¨™ç³»(earth frame)ã«ãŠã‘ã‚‹é¢¨é€Ÿãƒ™ã‚¯ãƒˆãƒ« 
 
-% angle of attack & angle of sideslip(Œ}Šp&‰¡ŠŠ‚èŠp)
+% angle of attack & angle of sideslip(è¿è§’&æ¨ªæ»‘ã‚Šè§’)
 % alpha = asin(Vab(3)/Va);
 alpha = atan(Vab(3)/Vab(1));
 bet = asin(Vab(2)/Va);
@@ -111,9 +111,9 @@ bet = asin(Vab(2)/Va);
 D = 0.5*rho*Va*Va*S*Cd;
 Y = 0.5*rho*Va*Va*S*Cnalpha*sin(bet);
 N = 0.5*rho*Va*Va*S*Cnalpha*sin(alpha);
-% D:R—Í(ì—p•ûŒü‚Í²—Í)
-% Y:‹@‘Ì²(Y²•ûŒü)‚Éì—p‚·‚é—Í¨side force
-% N:–@ü—Í
+% D:æŠ—åŠ›(ä½œç”¨æ–¹å‘ã¯è»¸åŠ›)
+% Y:æ©Ÿä½“è»¸(Yè»¸æ–¹å‘)ã«ä½œç”¨ã™ã‚‹åŠ›â†’side force
+% N:æ³•ç·šåŠ›
 
 % force @body frame
 Fe = [T-D;-Y;-N];
@@ -128,48 +128,48 @@ tdelay = tmax*dt+Dpara;
 
 % acceleration/velocity/position @earth-fixed frame
 switch(SIMULATION)
-    case 1                         % ’e“¹—‰º
+    case 1                         % å¼¾é“è½ä¸‹
         Ae = Aeb'*(Fe./m)-[0;0;g];
         Ve = Ae*dt+Ve;
         Xe = Ve*dt+Xe;
-    case 2                         % Œ¸‘¬—‰ºF‰º’i‚Ì”RÄI—¹Œã‚©‚Â‘¬“x‚ª•‰‚Åƒpƒ‰“WŠJCI’[‘¬“x‚É‘¦’B‚·‚é
+    case 2                         % æ¸›é€Ÿè½ä¸‹ï¼šä¸‹æ®µã®ç‡ƒç„¼çµ‚äº†å¾Œã‹ã¤é€Ÿåº¦ãŒè² ã§ãƒ‘ãƒ©å±•é–‹ï¼Œçµ‚ç«¯é€Ÿåº¦ã«å³é”ã™ã‚‹
         if (Ve(3)<=0)&&(t>tThrust)&&(Xe(3)>Hpara)
             Ae = [0;0;0];
             Ve = [Vw(1); Vw(2); -Vpara1*tanh(g*(t-tmax*dt)/Vpara1)];
             Xe = Ve*dt+Xe;
-        elseif (Ve(3)<=0)&&(t>tThrust)&&(Xe(3)<Hpara)   % 2’iƒpƒ‰
+        elseif (Ve(3)<=0)&&(t>tThrust)&&(Xe(3)<Hpara)   % 2æ®µãƒ‘ãƒ©
             Ae = [0;0;0];
             Ve = [Vw(1); Vw(2); -Vpara1+(Vpara1-Vpara2)*tanh(g*(t-tpara(1,2))/(Vpara1-Vpara2))];
             Xe = Ve*dt+Xe;          
-        else                                            % ã¸’†
+        else                                            % ä¸Šæ˜‡ä¸­
             Ae = Aeb'*(Fe./m)-[0;0;g];
             Ve = Ae*dt+Ve;
             Xe = Ve*dt+Xe;
         end
-    case 3                         % Œ¸‘¬—‰ºF‰º’i‚Ì”RÄI—¹Œã‚©‚Â‘¬“x‚ª•‰‚Åƒpƒ‰“WŠJCI’[‘¬“x‚É‘¦’B‚·‚é
+    case 3                         % æ¸›é€Ÿè½ä¸‹ï¼šä¸‹æ®µã®ç‡ƒç„¼çµ‚äº†å¾Œã‹ã¤é€Ÿåº¦ãŒè² ã§ãƒ‘ãƒ©å±•é–‹ï¼Œçµ‚ç«¯é€Ÿåº¦ã«å³é”ã™ã‚‹
         if (t>=tdelay)&&(t>tThrust)&&(Xe(3)>Hpara)
             Ae = [0;0;0];
             Ve = [Vw(1); Vw(2); -Vpara1*tanh(g*(t-tmax*dt)/Vpara1)];
             Xe = Ve*dt+Xe;
-        elseif (t>=tdelay)&&(t>tThrust)&&(Xe(3)<Hpara)   % 2’iƒpƒ‰
+        elseif (t>=tdelay)&&(t>tThrust)&&(Xe(3)<Hpara)   % 2æ®µãƒ‘ãƒ©
             Ae = [0;0;0];
             Ve = [Vw(1); Vw(2); -Vpara1+(Vpara1-Vpara2)*tanh(g*(t-tpara(1,2))/(Vpara1-Vpara2))];
             Xe = Ve*dt+Xe;          
-        else                                            % ã¸’†
+        else                                            % ä¸Šæ˜‡ä¸­
             Ae = Aeb'*(Fe./m)-[0;0;g];
             Ve = Ae*dt+Ve;
             Xe = Ve*dt+Xe;
         end     
 end
 
-Veab = norm(Ve);  %‹@‘¬
-Aeab = norm(Ae);  %‹@‘¬
+Veab = norm(Ve);  %æ©Ÿé€Ÿ
+Aeab = norm(Ae);  %æ©Ÿé€Ÿ
 
 % coefficient
 Kj = -(Ip0/mp0+(lcg-lcgp)^2-(l-lcg)^2)*mdot;
 Ka = 0.5*rho*S*(Va^2)*(l^2)/2/Va*Cmq;
-% Kj:ƒWƒFƒbƒgƒ_ƒ“ƒsƒ“ƒOŒW”
-% Ka:‹ó‹C—Í‚É‚æ‚éŒ¸Šƒ‚[ƒƒ“ƒgŒW”
+% Kj:ã‚¸ã‚§ãƒƒãƒˆãƒ€ãƒ³ãƒ”ãƒ³ã‚°ä¿‚æ•°
+% Ka:ç©ºæ°—åŠ›ã«ã‚ˆã‚‹æ¸›è¡°ãƒ¢ãƒ¼ãƒ¡ãƒ³ãƒˆä¿‚æ•°
 
 % angular velocity
 kt1 = -((lcp-lcg)*N+(Ka+Kj)*omg(2))/I;
@@ -181,35 +181,35 @@ kp1 = ((lcp-lcg)*Y+(Ka+Kj)*omg(3))/I;
 kp2 = ((lcp-lcg)*Y+(Ka+Kj)*(omg(3)+kp1*dt/2))/I;
 kp3 = ((lcp-lcg)*Y+(Ka+Kj)*(omg(3)+kp2*dt/2))/I;
 kp4 = ((lcp-lcg)*Y+(Ka+Kj)*(omg(3)+kp3*dt))/I;
-% kt:y²ü‚è‚ÌŠp‘¬“x
-% kp:z²ü‚è‚ÌŠp‘¬“x
+% kt:yè»¸å‘¨ã‚Šã®è§’é€Ÿåº¦
+% kp:zè»¸å‘¨ã‚Šã®è§’é€Ÿåº¦
 
 switch(SIMULATION)
     case 1
-        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ƒ‰ƒ“ƒ`ƒƒ‚Éh‚³‚Á‚Ä‚é‚Í‰ñ“]‚µ‚È‚¢
+        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ãƒ©ãƒ³ãƒãƒ£ã«åˆºã•ã£ã¦ã‚‹æ™‚ã¯å›è»¢ã—ãªã„
             omg = [0;0;0];
-        else                                              %”òãÄ’†‚¸‚Á‚Æƒ‹ƒ“ƒQƒNƒbƒ^
+        else                                              %é£›ç¿”ä¸­ãšã£ã¨ãƒ«ãƒ³ã‚²ã‚¯ãƒƒã‚¿
             omg = [0;
                    1/6*(kt1+2*kt2+2*kt3+kt4)*dt+omg(2);
                    1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
         end
         
     case 2
-        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ƒ‰ƒ“ƒ`ƒƒ‚Éh‚³‚Á‚Ä‚é‚Í‰ñ“]‚µ‚È‚¢
+        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ãƒ©ãƒ³ãƒãƒ£ã«åˆºã•ã£ã¦ã‚‹æ™‚ã¯å›è»¢ã—ãªã„
             omg = [0;0;0];
-        elseif (Ve(3)<=0)&&(t>tThrust)                    %Œ¸‘¬—‰º’†‚à‰ñ“]‚µ‚È‚¢
+        elseif (Ve(3)<=0)&&(t>tThrust)                    %æ¸›é€Ÿè½ä¸‹ä¸­ã‚‚å›è»¢ã—ãªã„
             omg = [0;0;0];
-        else                                              %‚»‚êˆÈŠO‚Ì(ã¸’†)ƒ‹ƒ“ƒQƒNƒbƒ^
+        else                                              %ãã‚Œä»¥å¤–ã®æ™‚(ä¸Šæ˜‡ä¸­)ãƒ«ãƒ³ã‚²ã‚¯ãƒƒã‚¿
             omg = [0;
                    1/6*(kt1+2*kt2+2*kt3+kt4)*dt+omg(2);
                    1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
         end
     case 3
-        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ƒ‰ƒ“ƒ`ƒƒ‚Éh‚³‚Á‚Ä‚é‚Í‰ñ“]‚µ‚È‚¢
+        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ãƒ©ãƒ³ãƒãƒ£ã«åˆºã•ã£ã¦ã‚‹æ™‚ã¯å›è»¢ã—ãªã„
             omg = [0;0;0];
-        elseif (t>=tdelay)&&(t>tThrust)                    %Œ¸‘¬—‰º’†‚à‰ñ“]‚µ‚È‚¢
+        elseif (t>=tdelay)&&(t>tThrust)                    %æ¸›é€Ÿè½ä¸‹ä¸­ã‚‚å›è»¢ã—ãªã„
             omg = [0;0;0];
-        else                                              %‚»‚êˆÈŠO‚Ì(ã¸’†)ƒ‹ƒ“ƒQƒNƒbƒ^
+        else                                              %ãã‚Œä»¥å¤–ã®æ™‚(ä¸Šæ˜‡ä¸­)ãƒ«ãƒ³ã‚²ã‚¯ãƒƒã‚¿
             omg = [0;
                    1/6*(kt1+2*kt2+2*kt3+kt4)*dt+omg(2);
                    1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
@@ -223,11 +223,11 @@ qmat = [0 omg(3) -omg(2) 0;
         0 -omg(2) -omg(3) 0];
 q = (0.5*qmat*q*dt+q)/norm(q);
 
-% attitude angle(p¨Šp)
+% attitude angle(å§¿å‹¢è§’)
 the = asin(Aeb(1,3));
 psi = atan(Aeb(1,2)/Aeb(1,1));
 
-% ƒ‰ƒ“ƒ`ƒNƒŠƒA‘¬“x
+% ãƒ©ãƒ³ãƒã‚¯ãƒªã‚¢é€Ÿåº¦
 if (norm(Xe)<lLnchr) && (t<tThrust)
    Vlc = Veab(1);
 else
@@ -317,8 +317,8 @@ legend('Vab(1)','Vab(2)','Vab(3)');
 
 figure
 plot3(real(log_Xe(1,:)),real(log_Xe(2,:)),real(log_Xe(3,:)));
-xlabel('“Œ¼ [m]')
-ylabel('–k“ì [m]')
+xlabel('æ±è¥¿ [m]')
+ylabel('åŒ—å— [m]')
 
 figure
 plot(log_t(1,:),real(log_Aeab(1,:)));
@@ -327,10 +327,10 @@ ylabel('Acceleraition [m/s^2]');
 grid on
 
 % display
-fprintf('ver1.6FMODE#%d\n',SIMULATION)
-fprintf('•—ŒüF%ddegC•—‘¬%dm/s\n',WazDeg,Vwaz);
-fprintf('‰º’i”RÄŠÔF%.2fsC’¸“_“’BŠÔ%.2fs\n',tThrust,tmax*dt);
-fprintf('Å‚“’B‚“xF%fm\n',max(log_Xe(3,:)));
-fprintf('Å‚‘Î‹C‘¬“xF%fm/s\n',max(log_Va(1,:)));
-fprintf('ƒƒ“ƒ`ƒƒ—£’E‘¬“xF%fm/s\n',max(log_Vlc(1,:)));
-fprintf('ƒ_ƒEƒ“ƒŒƒ“ƒWF%fm\n',norm(log_Xe(:,end-1)));
+fprintf('ver1.6ï¼šMODE#%dÂ¥n',SIMULATION)
+fprintf('é¢¨å‘ï¼š%ddegï¼Œé¢¨é€Ÿ%dm/sÂ¥n',WazDeg,Vwaz);
+fprintf('ä¸‹æ®µç‡ƒç„¼æ™‚é–“ï¼š%.2fsï¼Œé ‚ç‚¹åˆ°é”æ™‚é–“%.2fsÂ¥n',tThrust,tmax*dt);
+fprintf('æœ€é«˜åˆ°é”é«˜åº¦ï¼š%fmÂ¥n',max(log_Xe(3,:)));
+fprintf('æœ€é«˜å¯¾æ°—é€Ÿåº¦ï¼š%fm/sÂ¥n',max(log_Va(1,:)));
+fprintf('ãƒ­ãƒ³ãƒãƒ£é›¢è„±é€Ÿåº¦ï¼š%fm/sÂ¥n',max(log_Vlc(1,:)));
+fprintf('ãƒ€ã‚¦ãƒ³ãƒ¬ãƒ³ã‚¸ï¼š%fmÂ¥n',norm(log_Xe(:,end-1)));
