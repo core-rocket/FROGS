@@ -1,6 +1,6 @@
 % FROGS
-% ver1.7 (190328edited)
-%
+% ver1.8 (190807edited)
+% for NSE15th
 % main
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11,7 +11,7 @@ close all
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
-global Vwaz Waz S SIMULATION Dpara WazDeg
+global Vwaz Waz S SIMULATION Dpara WazDeg HeightH
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 1=Ballistic fall 2=Retarding fall 3=Delay time
@@ -26,6 +26,7 @@ Ve  = [IV(1); IV(2); IV(3)];            %地球座標系における機体速度ベクトル
 Xe  = [IV(4); IV(5); IV(6)];            %地球座標系における機体位置ベクトル
 omg = [0; IV(7); IV(8)];                %角速度
 q   = [IV(9); IV(10); IV(11); IV(12)];  %クォータニオン
+Winddata = readmatrix('Winddata3.csv');
 i = 1;                                  %ステップ数
 t = 0;                                  %時間
 %%%
@@ -74,16 +75,25 @@ switch(WindModel)
         end
     case 2
         Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];             
-    case 3  % 上空風
-        if i==1                                           %ステップが1の時は高度0mなので計測値のまま
+    case 3                                                % 統計風
+        if i==1
             Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];
         elseif Xe(3)>=HeightH
-            Vw = [VwazH*cos(WazH);...                     %上空風(一様風)
-                  VwazH*sin(WazH);0];
+            Xew = ceil(Xe(3));
+            VwazH = Winddata(Xew-HeightH,1);
+            WazH = Winddata(Xew-HeightH,2);
+            Vw = [VwazH*cos(WazH);VwazH*sin(WazH);0];
         else
-            Vw = [Vwaz*((Xe(3)/Zr)^(1/Cdv))*cos(Waz);...  %べき法則
-                  Vwaz*((Xe(3)/Zr)^(1/Cdv))*sin(Waz);0];
-        end
+            Vwazl = Vwaz+(Winddata(1,1)-Vwaz)/(HeightH-Zr)*Xe(3);
+            if (Winddata(1,2)+2*pi+pi) < Waz
+                Wazl = Waz+(Winddata(1,2)+2*pi+2*pi-Waz)/(HeightH-Zr)*Xe(3);
+            elseif (Winddata(1,2)+2*pi-pi) > Waz
+                Wazl = Waz+(Winddata(1,2)-Waz)/(HeightH-Zr)*Xe(3);
+            else
+                Wazl = Waz+(Winddata(1,2)+2*pi-Waz)/(HeightH-Zr)*Xe(3);
+            end
+            Vw = [Vwazl*cos(Wazl); Vwazl*sin(Wazl);0];
+        end 
 end
 
 % airspeed [m/s](対気速度)
@@ -152,6 +162,9 @@ switch(SIMULATION)
         end     
 end
 
+Veab = norm(Ve);  %機速
+Aeab = norm(Ae);  %機速
+
 % coefficient
 Kj = -(Ip0/mp0+(lcg-lcgp)^2-(l-lcg)^2)*mdot;
 Ka = 0.5*rho*S*(Va^2)*(l^2)/2/Va*Cmq;
@@ -215,10 +228,10 @@ the = asin(Aeb(1,3));
 psi = atan(Aeb(1,2)/Aeb(1,1));
 
 % ランチクリア速度
-if (Xe(3)<lLnchr) && (t<tThrust)
-    Vlc = Ve(3);
+if (norm(Xe)<lLnchr) && (t<tThrust)
+   Vlc = Veab(1);
 else
-    Vlc = 0;
+   Vlc = 0;
 end
 
 % log
@@ -239,6 +252,8 @@ log_N(1,i)     = N;
 log_Fe(:,i)    = Fe;
 log_Ae(:,i)    = Ae;
 log_Ve(:,i)    = Ve;
+log_Veab(1,i)  = Veab;
+log_Aeab(1,i)  = Aeab;
 log_Kj(1,i)    = Kj;
 log_Ka(1,i)    = Ka;
 log_omg(:,i)   = omg*180/pi;
@@ -304,6 +319,11 @@ figure
 plot3(real(log_Xe(1,:)),real(log_Xe(2,:)),real(log_Xe(3,:)));
 xlabel('東西 [m]')
 ylabel('北南 [m]')
+
+figure
+plot(log_t(1,:),real(log_Aeab(1,:)));
+xlabel('Time, t [sec]');
+ylabel('Acceleraition [m/s^2]');
 grid on
 
 % display
@@ -313,3 +333,4 @@ fprintf('下段燃焼時間：%.2fs，頂点到達時間%.2fs\n',tThrust,tmax*dt);
 fprintf('最高到達高度：%fm\n',max(log_Xe(3,:)));
 fprintf('最高対気速度：%fm/s\n',max(log_Va(1,:)));
 fprintf('ロンチャ離脱速度：%fm/s\n',max(log_Vlc(1,:)));
+fprintf('ダウンレンジ：%fm\n',norm(log_Xe(:,end-1)));

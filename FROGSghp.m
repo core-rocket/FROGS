@@ -1,6 +1,6 @@
 % FROGS
-% ver1.7 (190328edited)
-%
+% ver1.8 (190807edited)
+% for NSE15th
 % main
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11,21 +11,23 @@ close all
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
-global S SIMULATION Dpara HeightH VwazH WazH
+global S SIMULATION Dpara HeightH 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 3=Ballistic fall，4=Retarding fall 5=Delay time
-SIMULATION  = 3;
+SIMULATION  = 4;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
 FROGSthrust;            % thrustデータの読み込み
 %
-GHP = zeros(16,17);
+GHP = zeros(14,17);
 Delays = zeros(7,17);
 DELAY = csvread('DelayTime.csv');
-for Vtemp = 1:7
-    Vwaz = 0+Vtemp*1.0;
+Winddata = readmatrix('Winddata.csv');
+%for Vtemp = 1:6
+    %Vwaz = 0+Vtemp*1.0;
+    Vwaz = 5.5;
 for k = 1:17
     Waz = 22.5*(k-1)/180*pi;
 
@@ -82,15 +84,24 @@ switch(WindModel)
         end
     case 2
         Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];             
-    case 3  % 上空風
-        if i==1                                           %ステップが1の時は高度0mなので計測値のまま
+    case 3                                                % 統計風
+        if i==1
             Vw = [Vwaz*cos(Waz);Vwaz*sin(Waz);0];
         elseif Xe(3)>=HeightH
-            Vw = [VwazH*cos(WazH);...                     %上空風(一様風)
-                  VwazH*sin(WazH);0];
+            Xew = ceil(Xe(3));
+            VwazH = Winddata(Xew-HeightH,1);
+            WazH = Winddata(Xew-HeightH,2);
+            Vw = [VwazH*cos(WazH);VwazH*sin(WazH);0];
         else
-            Vw = [Vwaz*((Xe(3)/Zr)^(1/Cdv))*cos(Waz);...  %べき法則
-                  Vwaz*((Xe(3)/Zr)^(1/Cdv))*sin(Waz);0];
+            Vwazl = Vwaz+(Winddata(1,1)-Vwaz)/(HeightH-Zr)*Xe(3);
+            if (Winddata(1,2)+pi) < Waz
+                Wazl = Waz+(Winddata(1,2)+2*pi-Waz)/(HeightH-Zr)*Xe(3);
+            elseif (Winddata(1,2)-pi) > Waz
+                Wazl = Waz+(Winddata(1,2)-2*pi-Waz)/(HeightH-Zr)*Xe(3);
+            else
+                Wazl = Waz+(Winddata(1,2)-Waz)/(HeightH-Zr)*Xe(3);
+            end
+            Vw = [Vwazl*cos(Wazl); Vwazl*sin(Wazl);0];
         end
 end
 
@@ -221,13 +232,16 @@ tdelay = tmax*dt+Dpara;
 if (Xe(3)<0)&&(t>tThrust)
     break
 end
-end
+%end
 %
-GHP(2*Vtemp-1,k) = real(Xe(1));
-GHP(2*Vtemp,k) = real(Xe(2));
-Delays(Vtemp,k) = real(tdelay);
+%GHP(2*Vtemp-1,k) = real(Xe(1));
+%GHP(2*Vtemp,k) = real(Xe(2));
+GHP(1,k) = real(Xe(1));
+GHP(2,k) = real(Xe(2));
+%Delays(Vtemp,k) = real(tdelay);
 end
 % plot
-plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
+%plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
+plot(GHP(1,:),GHP(2,:),'-squareb');
 hold on;
 end

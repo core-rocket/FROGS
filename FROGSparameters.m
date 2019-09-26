@@ -1,7 +1,7 @@
 function [] = FROGSparameters
 % FROGS
-% ver1.7 (190328edited)
-%
+% ver1.8 (190807edited)
+% for NSE15th
 % Parameter Setting
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -9,7 +9,7 @@ global l lcg0 lcgf lcgp lcp d m0 mf I0 If
 global Cd Cnalpha Vpara1 Vpara2 Hpara
 global LeleDeg LazDeg lLnchr
 global WindModel dt n Cdv Zr WazDeg Vwaz
-global PMT Dpara HeightH VwazH WazDegH ZrH CdvH
+global PMT Dpara HeightH
 
 FROGSparain;        % parainの読み込み
 % length [m]
@@ -41,25 +41,21 @@ Dpara    = 1.5;         % para delay [s]
 
 % launcher
 LeleDeg  = 70;           % angle of elevation (vertical=90deg) [deg]
-LazDeg   = 300;          % azimuth (east=0deg / south=270deg) [deg]
+LazDeg   = 161;          % azimuth (east=0deg / south=270deg) [deg]
 lLnchr   = 5;          % length [m]
 
 % wind
-WindModel= 1;            % model of wind speed
-                         % 1:power model / 2:uniformity / 3:上空風
-Cdv      = 6.0;          % coefficient [-]
+WindModel= 3;            % model of wind speed
+                         % 1:power model / 2:uniformity / 3:統計風
+Cdv      = 2.0;          % coefficient [-]
                          % in case of WindModel=1
-WazDeg   = 240;            % azimuth of wind [deg]
+WazDeg   = 180;            % azimuth of wind [deg]
                          % east=0deg / south=270deg
-Vwaz     = 3.8;            % wind speed [m/s]
-Zr       = 2;            % altitude anemometer located  [m]
+Vwaz     = 2;            % wind speed [m/s]
+Zr       = 5;            % altitude anemometer located  [m]
 
-%Higher
-HeightH = 1000;         %上空風高度
-VwazH   = 10;           %上空風風速
-WazDegH = 210;          %上空風の吹く向き(120>30>210)
-ZrH     = 1000;
-CdvH    = 6.0;
+HeightH  = 90;           %風データ最低高度[m]
+
 % simulation
 dt       = 0.01;         % simulation step [s]
                          % MUST BE 0.01s OR LESS!!!

@@ -1,7 +1,7 @@
 function [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4] = FROGSprset()
 % FROGS
-% ver1.7 (190328edited)
-%
+% ver1.8 (190807edited)
+% for NSE15th
 % Initial value setting
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10,8 +10,8 @@ global g S Lele LeleDeg Laz LazDeg Waz WazDeg thrust
 global the0 psi0 tThrust Cmq Cnalpha n SIMULATION 
 global log_t log_T log_m log_I log_lcg lcp lcg0 l d dt
 global log_rho log_Vw log_Vab log_Va log_alpha
-global log_bet log_D log_Y log_N log_Fe 
-global log_Ae log_Ve log_Xe log_Kj log_Ka
+global log_bet log_D log_Y log_N log_Fe log_Aeab
+global log_Ae log_Ve log_Xe log_Kj log_Ka log_Veab
 global log_omg log_q log_the log_psi m0 mf mp0
 global Ip0 lcgp mm0 WazH WazDegH
 % constant
@@ -60,6 +60,8 @@ if SIMULATION == 1 || 2
     log_Fe    = zeros(3,n);
     log_Ae    = zeros(3,n);
     log_Ve    = zeros(3,n);
+    log_Aeab  = zeros(1,n);
+    log_Veab  = zeros(1,n);
     log_Xe    = zeros(3,n);
     log_Kj    = zeros(1,n);
     log_Ka    = zeros(1,n);
