@@ -1,5 +1,5 @@
 % FROGS
-% ver1.2 (181011edited)
+% ver1.3 (181117edited)
 %
 % main
 %
@@ -15,7 +15,7 @@ global Vwaz Waz S SIMULATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 1=Ballistic fall 2=Retarding fall
-SIMULATION  = 1;
+SIMULATION  = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
@@ -56,7 +56,7 @@ end
 
 rho = 1.23-(0.11e-3)*Xe(3);                 % atmospheric density
                                             % Don't use this equation over 2km
-
+                                            
 % wind
 switch(WindModel)
     case 1                                                %べき乗則
@@ -79,7 +79,7 @@ Va = norm(Vab);
 % angle of attack & angle of sideslip(迎角&横滑り角)
 alpha = asin(Vab(3)/Va);
 bet = asin(Vab(2)/Va);
- 
+
 % drag & normal force & side force
 D = 0.5*rho*Va*Va*S*Cd;
 Y = 0.5*rho*Va*Va*S*Cnalpha*sin(bet);
@@ -100,11 +100,11 @@ switch(SIMULATION)
     case 2                         % 減速落下：下段の燃焼終了後かつ速度が負でパラ展開，終端速度に即達する
         if (Ve(3)<=0)&&(t>tThrust)&&(Xe(3)>Hpara)
             Ae = [0;0;0];
-            Ve = [Vw(1); Vw(2); -Vpara1];
+            Ve = [Vw(1); Vw(2); -Vpara1*tanh(g*(t-tmax*dt)/Vpara1)];
             Xe = Ve*dt+Xe;
         elseif (Ve(3)<=0)&&(t>tThrust)&&(Xe(3)<Hpara)   % 2段パラ
             Ae = [0;0;0];
-            Ve = [Vw(1); Vw(2); -Vpara2];
+            Ve = [Vw(1); Vw(2); -Vpara1+(Vpara1-Vpara2)*tanh(g*(t-tpara(1,2))/(Vpara1-Vpara2))];
             Xe = Ve*dt+Xe;          
         else                                            % 上昇中
             Ae = Aeb'*(Fe./m)-[0;0;g];
@@ -191,6 +191,11 @@ log_q(:,i)     = q;
 log_the(1,i)   = the*180/pi;
 log_psi(1,i)   = psi*180/pi;
 %
+[xmax,tmax] = max(log_Xe(3,:));
+tmin=size(log_Xe(3,:));
+MP1=log_Xe(3,tmax:tmin(1,2));
+MP2=find(MP1>Hpara);
+tpara = size(MP2)*dt+tmax*dt;
 if (real(log_Xe(3,i))<0)&&(log_t(1,i)>tThrust)
     break
 end

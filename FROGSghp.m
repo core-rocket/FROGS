@@ -159,7 +159,6 @@ switch(SIMULATION)
                    1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
         end
 end
-
 % quaternion
 qmat = [0 omg(3) -omg(2) 0;
         -omg(3) 0 0 omg(2);
