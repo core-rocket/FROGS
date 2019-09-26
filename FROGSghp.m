@@ -1,5 +1,5 @@
 % FROGS
-% ver1.2 (181011edited)
+% ver1.5 (190118edited)
 %
 % main
 %
@@ -11,18 +11,20 @@ close all
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
-global S SIMULATION
+global S SIMULATION Dpara
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
-%%% 3=Ballistic fall，4=Retarding fall
-SIMULATION  = 3;
+%%% 3=Ballistic fall，4=Retarding fall 5=Delay time
+SIMULATION  = 4;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
 FROGSthrust;            % thrustデータの読み込み
 %
 GHP = zeros(16,17);
-for Vtemp = 1:8
+Delays = zeros(7,17);
+DELAY = csvread('DelayTime.csv');
+for Vtemp = 1:7
     Vwaz = 0+Vtemp*1.0;
 for k = 1:17
     Waz = 22.5*(k-1)/180*pi;
@@ -36,9 +38,9 @@ q   = [IV(9); IV(10); IV(11); IV(12)];  %クォータニオン
 i = 1;                                  %ステップ数
 t = 0;                                  %時間
 %%%
+log_Xe    = zeros(3,n);
 for i = 1:n                             % 1~nまで繰り返し計算
 t = i*dt;                               % time [s]
-
 % transformation matrix(earth frame --> body frame)(座標変換行列)(地上座標系を機体座標系へ)
 Aeb=[1-2*((q(2)^2)+(q(3)^2)),...
     2*(q(1)*q(2)+q(3)*q(4)),2*(q(3)*q(1)-q(2)*q(4));
@@ -111,17 +113,31 @@ switch(SIMULATION)
     case 4                         % 減速落下：下段の燃焼終了後かつ速度が負でパラ展開，終端速度に即達する
         if (Ve(3)<=0)&&(t>tThrust)&&(Xe(3)>Hpara)
             Ae = [0;0;0];
-            Ve = [Vw(1); Vw(2); -Vpara1];
+            Ve = [Vw(1); Vw(2); -Vpara1*tanh(g*(t-tmax*dt)/Vpara1)];
             Xe = Ve*dt+Xe;
         elseif (Ve(3)<=0)&&(t>tThrust)&&(Xe(3)<Hpara)   % 2段パラ
             Ae = [0;0;0];
-            Ve = [Vw(1); Vw(2); -Vpara2];
+            Ve = [Vw(1); Vw(2); -Vpara1+(Vpara1-Vpara2)*tanh(g*(t-tpara(1,2))/(Vpara1-Vpara2))];
             Xe = Ve*dt+Xe;          
         else                                            % 上昇中
             Ae = Aeb'*(Fe./m)-[0;0;g];
             Ve = Ae*dt+Ve;
             Xe = Ve*dt+Xe;
         end
+    case 5                         % 減速落下：下段の燃焼終了後かつ速度が負でパラ展開，終端速度に即達する
+        if (t>=DELAY(Vtemp,k))&&(t>tThrust)&&(Xe(3)>Hpara)
+            Ae = [0;0;0];
+            Ve = [Vw(1); Vw(2); -Vpara1*tanh(g*(t-tmax*dt)/Vpara1)];
+            Xe = Ve*dt+Xe;
+        elseif (t>=DELAY(Vtemp,k))&&(t>tThrust)&&(Xe(3)<Hpara)   % 2段パラ
+            Ae = [0;0;0];
+            Ve = [Vw(1); Vw(2); -Vpara1+(Vpara1-Vpara2)*tanh(g*(t-tpara(1,2))/(Vpara1-Vpara2))];
+            Xe = Ve*dt+Xe;          
+        else                                            % 上昇中
+            Ae = Aeb'*(Fe./m)-[0;0;g];
+            Ve = Ae*dt+Ve;
+            Xe = Ve*dt+Xe;
+        end        
 end
 
 % coefficient
@@ -152,11 +168,20 @@ switch(SIMULATION)
                    1/6*(kt1+2*kt2+2*kt3+kt4)*dt+omg(2);
                    1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
         end
-        
     case 4
         if (Xe(3)<lLnchr)&&(t<tThrust)                    %ランチャに刺さってる時は回転しない
             omg = [0;0;0];
         elseif (Ve(3)<=0)&&(t>tThrust)                    %減速落下中も回転しない
+            omg = [0;0;0];
+        else                                              %それ以外の時(上昇中)ルンゲクッタ
+            omg = [0;
+                   1/6*(kt1+2*kt2+2*kt3+kt4)*dt+omg(2);
+                   1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
+        end
+    case 5
+        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ランチャに刺さってる時は回転しない
+            omg = [0;0;0];
+        elseif (t>=DELAY(Vtemp,k))&&(t>tThrust)                    %減速落下中も回転しない
             omg = [0;0;0];
         else                                              %それ以外の時(上昇中)ルンゲクッタ
             omg = [0;
@@ -175,6 +200,13 @@ q = (0.5*qmat*q*dt+q)/norm(q);
 the = asin(Aeb(1,3));
 psi = atan(Aeb(1,2)/Aeb(1,1));
 
+log_Xe(:,i)    = Xe;
+[xmax,tmax] = max(log_Xe(3,:));
+tmin=size(log_Xe(3,:));
+MP1=log_Xe(3,tmax:tmin(1,2));
+MP2=find(MP1>Hpara);
+tpara = size(MP2)*dt+tmax*dt;
+tdelay = tmax*dt+Dpara;
 %
 if (Xe(3)<0)&&(t>tThrust)
     break
@@ -183,6 +215,7 @@ end
 %
 GHP(2*Vtemp-1,k) = real(Xe(1));
 GHP(2*Vtemp,k) = real(Xe(2));
+Delays(Vtemp,k) = real(tdelay);
 end
 % plot
 plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');

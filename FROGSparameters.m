@@ -9,7 +9,7 @@ global l lcg0 lcgf lcgp lcp d m0 mf I0 If
 global Cd Cnalpha Vpara1 Vpara2 Hpara
 global LeleDeg LazDeg lLnchr
 global WindModel dt n Cdv Zr WazDeg Vwaz
-global PMT
+global PMT Dpara
 
 FROGSparain;        % parainÇÃì«Ç›çûÇ›
 % length [m]
@@ -37,10 +37,11 @@ Cnalpha  = PMT(12);      % normal force coefficient
 Vpara1   = PMT(13);      % falling velocity of 1st parachute [m/s]
 Vpara2   = PMT(14);      % falling velocity of 2nd parachute[m/s]
 Hpara    = 300;          % 2nd parachute's deployment altitude  [m]
+Dpara    = 1.0;         % para delay [s]
 
 % launcher
-LeleDeg  = 88;           % angle of elevation (vertical=90deg) [deg]
-LazDeg   = 90;          % azimuth (east=0deg / south=270deg) [deg]
+LeleDeg  = 70;           % angle of elevation (vertical=90deg) [deg]
+LazDeg   = 0;          % azimuth (east=0deg / south=270deg) [deg]
 lLnchr   = 5.0;          % length [m]
 
 % wind
@@ -48,9 +49,9 @@ WindModel= 1;            % model of wind speed
                          % 1:power model / 2:uniformity
 Cdv      = 6.0;          % coefficient [-]
                          % in case of WindModel=1
-WazDeg   = 270;            % azimuth of wind [deg]
+WazDeg   = 180;            % azimuth of wind [deg]
                          % east=0deg / south=270deg
-Vwaz     = 6;            % wind speed [m/s]
+Vwaz     = 7;            % wind speed [m/s]
 Zr       = 5;            % altitude anemometer located  [m]
 
 % simulation

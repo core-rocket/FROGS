@@ -11,11 +11,11 @@ close all
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
-global Vwaz Waz S SIMULATION
+global Vwaz Waz S SIMULATION Dpara
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
-%%% 1=Ballistic fall 2=Retarding fall
-SIMULATION  = 1;
+%%% 1=Ballistic fall 2=Retarding fall 3=Delay time
+SIMULATION  = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
@@ -98,6 +98,14 @@ N = 0.5*rho*Va*Va*S*Cnalpha*sin(alpha);
 % force @body frame
 Fe = [T-D;-Y;-N];
 
+log_Xe(:,i)    = Xe;
+[xmax,tmax] = max(log_Xe(3,:));
+tmin=size(log_Xe(3,:));
+MP1=log_Xe(3,tmax:tmin(1,2));
+MP2=find(MP1>Hpara);
+tpara = size(MP2)*dt+tmax*dt;
+tdelay = tmax*dt+Dpara;
+
 % acceleration/velocity/position @earth-fixed frame
 switch(SIMULATION)
     case 1                         % 弾道落下
@@ -118,6 +126,20 @@ switch(SIMULATION)
             Ve = Ae*dt+Ve;
             Xe = Ve*dt+Xe;
         end
+    case 3                         % 減速落下：下段の燃焼終了後かつ速度が負でパラ展開，終端速度に即達する
+        if (t>=tdelay)&&(t>tThrust)&&(Xe(3)>Hpara)
+            Ae = [0;0;0];
+            Ve = [Vw(1); Vw(2); -Vpara1*tanh(g*(t-tmax*dt)/Vpara1)];
+            Xe = Ve*dt+Xe;
+        elseif (t>=tdelay)&&(t>tThrust)&&(Xe(3)<Hpara)   % 2段パラ
+            Ae = [0;0;0];
+            Ve = [Vw(1); Vw(2); -Vpara1+(Vpara1-Vpara2)*tanh(g*(t-tpara(1,2))/(Vpara1-Vpara2))];
+            Xe = Ve*dt+Xe;          
+        else                                            % 上昇中
+            Ae = Aeb'*(Fe./m)-[0;0;g];
+            Ve = Ae*dt+Ve;
+            Xe = Ve*dt+Xe;
+        end     
 end
 
 % coefficient
@@ -159,6 +181,16 @@ switch(SIMULATION)
                    1/6*(kt1+2*kt2+2*kt3+kt4)*dt+omg(2);
                    1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
         end
+    case 3
+        if (Xe(3)<lLnchr)&&(t<tThrust)                    %ランチャに刺さってる時は回転しない
+            omg = [0;0;0];
+        elseif (t>=tdelay)&&(t>tThrust)                    %減速落下中も回転しない
+            omg = [0;0;0];
+        else                                              %それ以外の時(上昇中)ルンゲクッタ
+            omg = [0;
+                   1/6*(kt1+2*kt2+2*kt3+kt4)*dt+omg(2);
+                   1/6*(kp1+2*kp2+2*kp3+kp4)*dt+omg(3)];
+        end
 end
 
 % quaternion
@@ -190,7 +222,6 @@ log_N(1,i)     = N;
 log_Fe(:,i)    = Fe;
 log_Ae(:,i)    = Ae;
 log_Ve(:,i)    = Ve;
-log_Xe(:,i)    = Xe;
 log_Kj(1,i)    = Kj;
 log_Ka(1,i)    = Ka;
 log_omg(:,i)   = omg*180/pi;
@@ -198,11 +229,7 @@ log_q(:,i)     = q;
 log_the(1,i)   = the*180/pi;
 log_psi(1,i)   = psi*180/pi;
 %
-[xmax,tmax] = max(log_Xe(3,:));
-tmin=size(log_Xe(3,:));
-MP1=log_Xe(3,tmax:tmin(1,2));
-MP2=find(MP1>Hpara);
-tpara = size(MP2)*dt+tmax*dt;
+
 if (real(log_Xe(3,i))<0)&&(log_t(1,i)>tThrust)
     break
 end
