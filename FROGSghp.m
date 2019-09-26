@@ -23,7 +23,7 @@ FROGSthrust;            % thrustデータの読み込み
 %
 GHP = zeros(16,17);
 for Vtemp = 1:8
-    Vwaz = 0.0+Vtemp*1.0;
+    Vwaz = 0+Vtemp*1.0;
 for k = 1:17
     Waz = 22.5*(k-1)/180*pi;
 
@@ -61,8 +61,13 @@ else                                        % 燃焼終了後
     lcg     = lcgf;                         % center of gravity [m]
 end
 
-rho = 1.23-(0.11e-3)*Xe(3);             % atmospheric density
+%rho = 1.23-(0.11e-3)*Xe(3);             % atmospheric density
                                         % Don't use this equation over 2km
+r0=6356766;
+H = (r0*Xe(3)*0.001)/(r0+Xe(3)*0.001);       % ジオポテンシャル高度
+Temp = 15 - 6.5*H;
+P =101325 * (288.15./(Temp +273.15)).^(-5.256);
+rho = (0.0034837*P)/(Temp+273.15);       % Don't use this equation over 11km
 
 % wind
 switch(WindModel)
