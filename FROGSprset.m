@@ -1,19 +1,19 @@
 function [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4] = FROGSprset()
 % FROGS
-% ver1.2 (181011edited)
+% ver1.4 (181124created)
 %
 % Initial value setting
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 global g S Lele LeleDeg Laz LazDeg Waz WazDeg thrust
-global the0 psi0 tThrust Cmq Cnalpha n SIMULATION
+global the0 psi0 tThrust Cmq Cnalpha n SIMULATION 
 global log_t log_T log_m log_I log_lcg lcp lcg0 l d dt
 global log_rho log_Vw log_Vab log_Va log_alpha
 global log_bet log_D log_Y log_N log_Fe 
 global log_Ae log_Ve log_Xe log_Kj log_Ka
 global log_omg log_q log_the log_psi m0 mf mp0
-
+global Ip0 lcgp mm0
 % constant
 g       = 9.80665;           % acceleration of gravity[m/s^2]
 S       = pi*d*d/4;          
@@ -23,6 +23,8 @@ Laz     = LazDeg*pi/180;
 Waz     = WazDeg*pi/180;
 tThrust = size(thrust,1)*dt;
 Cmq     = -Cnalpha/2*((lcp-lcg0)/l)^2;
+Ip0     = (lcgp-lcg0)^2*(mm0);  % moment of inertia of fuel & N2O
+
 
 % initial values
 the0    = Lele;

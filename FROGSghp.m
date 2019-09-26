@@ -15,7 +15,7 @@ global S SIMULATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(íeìπorå∏ë¨)
 %%% 3=Ballistic fallÅC4=Retarding fall
-SIMULATION  = 4;
+SIMULATION  = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterÇÃì«Ç›çûÇ›

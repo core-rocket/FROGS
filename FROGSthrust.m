@@ -1,9 +1,9 @@
 function [] = FROGSthrust
 % FROGS
-% ver1.2 (171107created)
+% ver1.4 (181124created)
 %
 % Thrust data
-%
+% HyperTEK_K240
 % !!!EXAMPLE!!!
 % thrust=[value_1st
 %         value_2nd
@@ -12,7 +12,8 @@ function [] = FROGSthrust
 % !!!DO NOT FORGET "[];"!!! 
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-global thrust
+global thrust mm0
+mm0 = 1.864;    %“_‰ÎŽžƒGƒ“ƒWƒ“Ž¿—Ê[kg]
 
 thrust=[
 158.4896959
