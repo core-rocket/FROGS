@@ -1,6 +1,6 @@
 function [] = FROGSparain
 % FROGS
-% ver1.4 (181124created)
+% ver1.4.1 (181124created)
 %
 % Parameter Input
 %
@@ -27,4 +27,6 @@ PMT=[
 1.091
 0.42
 5.94
+12
+12
 ];

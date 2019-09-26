@@ -15,7 +15,7 @@ global Vwaz Waz S SIMULATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(íeìπorå∏ë¨)
 %%% 1=Ballistic fall 2=Retarding fall
-SIMULATION  = 1;
+SIMULATION  = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterÇÃì«Ç›çûÇ›
