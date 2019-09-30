@@ -24,12 +24,12 @@ FROGSthrust;            % thrustデータの読み込み
 GHP = zeros(14,17);
 Delays = zeros(7,17);
 DELAY = csvread('DelayTime.csv');
-Winddata = readmatrix('Winddata.csv');
-%for Vtemp = 1:6
-    %Vwaz = 0+Vtemp*1.0;
-    Vwaz = 5.5;
-for k = 1:17
-    Waz = 22.5*(k-1)/180*pi;
+%Winddata = readmatrix('Winddata.csv');
+for Vtemp = 1:7
+    Vwaz = 0+Vtemp*1.0;
+    %Vwaz = 5.5;
+for k = 1:9
+    Waz = 45*(k-1)/180*pi;
 
 [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4]  = FROGSprset;
 IV  = [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4];
@@ -232,16 +232,16 @@ tdelay = tmax*dt+Dpara;
 if (Xe(3)<0)&&(t>tThrust)
     break
 end
-%end
+end
 %
-%GHP(2*Vtemp-1,k) = real(Xe(1));
-%GHP(2*Vtemp,k) = real(Xe(2));
-GHP(1,k) = real(Xe(1));
-GHP(2,k) = real(Xe(2));
+GHP(2*Vtemp-1,k) = real(Xe(1));
+GHP(2*Vtemp,k) = real(Xe(2));
+%GHP(1,k) = real(Xe(1));
+%GHP(2,k) = real(Xe(2));
 %Delays(Vtemp,k) = real(tdelay);
 end
 % plot
-%plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
-plot(GHP(1,:),GHP(2,:),'-squareb');
+plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
+%plot(GHP(1,:),GHP(2,:),'-squareb');
 hold on;
 end

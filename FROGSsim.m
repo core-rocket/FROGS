@@ -26,7 +26,7 @@ Ve  = [IV(1); IV(2); IV(3)];            %地球座標系における機体速度
 Xe  = [IV(4); IV(5); IV(6)];            %地球座標系における機体位置ベクトル
 omg = [0; IV(7); IV(8)];                %角速度
 q   = [IV(9); IV(10); IV(11); IV(12)];  %クォータニオン
-Winddata = readmatrix('Winddata3.csv');
+Winddata = readmatrix('Winddata.csv');
 i = 1;                                  %ステップ数
 t = 0;                                  %時間
 %%%
