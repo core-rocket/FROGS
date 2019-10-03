@@ -337,4 +337,7 @@ fprintf('ダウンレンジ：%fm\n',norm(log_Xe(:,end-1)));
 fprintf('頂点大気密度: %f kg/(m^3)\n', log_rho(tmax));
 tmp = log_Va(1,:);
 fprintf('頂点対気速度: %f m/s\n', tmp(tmax));
+t_para = tmax + (2.5 / dt);
+fprintf('開傘時大気密度: %f kg/(m^3)\n', log_rho(t_para));
+fprintf('開傘時対気速度: %f m/s\n', tmp(t_para));
 fprintf('最大法線力: %f\n', max(log_N));
