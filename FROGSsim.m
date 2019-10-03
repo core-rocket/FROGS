@@ -327,10 +327,12 @@ ylabel('Acceleraition [m/s^2]');
 grid on
 
 % display
-fprintf('ver1.6：MODE#%d¥n',SIMULATION)
-fprintf('風向：%ddeg，風速%dm/s¥n',WazDeg,Vwaz);
-fprintf('下段燃焼時間：%.2fs，頂点到達時間%.2fs¥n',tThrust,tmax*dt);
-fprintf('最高到達高度：%fm¥n',max(log_Xe(3,:)));
-fprintf('最高対気速度：%fm/s¥n',max(log_Va(1,:)));
-fprintf('ロンチャ離脱速度：%fm/s¥n',max(log_Vlc(1,:)));
-fprintf('ダウンレンジ：%fm¥n',norm(log_Xe(:,end-1)));
+fprintf('ver1.6：MODE#%d\n',SIMULATION)
+fprintf('風向：%ddeg，風速%dm/s\n',WazDeg,Vwaz);
+fprintf('下段燃焼時間：%.2fs，頂点到達時間%.2fs\n',tThrust,tmax*dt);
+fprintf('最高到達高度：%fm\n',max(log_Xe(3,:)));
+fprintf('最高対気速度：%fm/s\n',max(log_Va(1,:)));
+fprintf('ロンチャ離脱速度：%fm/s\n',max(log_Vlc(1,:)));
+fprintf('ダウンレンジ：%fm\n',norm(log_Xe(:,end-1)));
+% fprintf('頂点速度: %f\n', )
+fprintf('最大法線力: %f\n', max(log_N));
