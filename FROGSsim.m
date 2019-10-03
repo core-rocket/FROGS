@@ -269,37 +269,37 @@ end
 end
 
 % plot
-figure
-plot(log_t(1,:),real(log_Xe(1,:)),'r',log_t(1,:),real(log_Xe(2,:)),'b',...
-    log_t(1,:),real(log_Xe(3,:)),'g')
-xlabel('Time, t [sec]');
-ylabel('Distance, Xe [m]');
-legend('Xe(1)','Xe(2)','Xe(3)');
+%figure
+%plot(log_t(1,:),real(log_Xe(1,:)),'r',log_t(1,:),real(log_Xe(2,:)),'b',...
+%    log_t(1,:),real(log_Xe(3,:)),'g')
+%xlabel('Time, t [sec]');
+%ylabel('Distance, Xe [m]');
+%legend('Xe(1)','Xe(2)','Xe(3)');
  
-figure
-plot(log_t(1,:),real(log_Ve(1,:)),'r',log_t(1,:),real(log_Ve(2,:)),'b',...
-    log_t(1,:),real(log_Ve(3,:)),'g')
-xlabel('Time, t [sec]');
-ylabel('Velocity, Ve [m/s]');
-legend('Ve(1)','Ve(2)','Ve(3)');
+%figure
+%plot(log_t(1,:),real(log_Ve(1,:)),'r',log_t(1,:),real(log_Ve(2,:)),'b',...
+%    log_t(1,:),real(log_Ve(3,:)),'g')
+%xlabel('Time, t [sec]');
+%ylabel('Velocity, Ve [m/s]');
+%legend('Ve(1)','Ve(2)','Ve(3)');
  
-figure
-plot(log_t(1,:),real(log_the(1,:)),'r',log_t(1,:),real(log_psi(1,:)),'b')
-xlabel('Time, t [sec]');
-ylabel('Attitude Angle [deg]');
-legend('the','psi');
+%figure
+%plot(log_t(1,:),real(log_the(1,:)),'r',log_t(1,:),real(log_psi(1,:)),'b')
+%xlabel('Time, t [sec]');
+%ylabel('Attitude Angle [deg]');
+%legend('the','psi');
  
-figure
-plot(log_t(1,:),real(log_omg(2,:)),'r',log_t(1,:),real(log_omg(3,:)),'b')
-xlabel('Time, t [sec]');
-ylabel('Angular Velocity, [deg/s]');
-legend('pitch (omg(2))','yaw (omg(3))');
+%figure
+%plot(log_t(1,:),real(log_omg(2,:)),'r',log_t(1,:),real(log_omg(3,:)),'b')
+%xlabel('Time, t [sec]');
+%ylabel('Angular Velocity, [deg/s]');
+%legend('pitch (omg(2))','yaw (omg(3))');
  
-figure
-plot(log_t(1,:),real(log_alpha(1,:)),'r',log_t(1,:),real(log_bet(1,:)),'b')
-xlabel('Time, t [sec]');
-ylabel('Angle [deg]');
-legend('Angle of Attack (alpha)','Angle of Sideslip (bet)');
+%figure
+%plot(log_t(1,:),real(log_alpha(1,:)),'r',log_t(1,:),real(log_bet(1,:)),'b')
+%xlabel('Time, t [sec]');
+%ylabel('Angle [deg]');
+%legend('Angle of Attack (alpha)','Angle of Sideslip (bet)');
  
 figure
 plot(log_t(1,:),real(log_D(1,:)),'r',log_t(1,:),real(log_N(1,:)),'b',...
@@ -334,5 +334,7 @@ fprintf('最高到達高度：%fm\n',max(log_Xe(3,:)));
 fprintf('最高対気速度：%fm/s\n',max(log_Va(1,:)));
 fprintf('ロンチャ離脱速度：%fm/s\n',max(log_Vlc(1,:)));
 fprintf('ダウンレンジ：%fm\n',norm(log_Xe(:,end-1)));
-% fprintf('頂点速度: %f\n', )
+fprintf('頂点大気密度: %f kg/(m^3)\n', log_rho(tmax));
+tmp = log_Va(1,:);
+fprintf('頂点対気速度: %f m/s\n', tmp(tmax));
 fprintf('最大法線力: %f\n', max(log_N));
