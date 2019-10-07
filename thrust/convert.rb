@@ -32,7 +32,7 @@ raw_csv.each do | data |
 
 		if step % ave_num == 0
 			now_thrust = thrust_sum / ave_num
-			puts "#{now_time},#{now_thrust}"
+			puts "#{now_time.round(2)},#{now_thrust}"
 			thrust_sum = 0.0
 		end
 
