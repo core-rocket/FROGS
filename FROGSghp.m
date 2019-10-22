@@ -29,9 +29,13 @@ DELAY = csvread('DelayTime.csv');
 tic
 
 for Vtemp = 1:7
+	fprintf("Vtemp = %d\n", Vtemp);
+
 	Vwaz = 0+Vtemp*1.0;
 	%Vwaz = 5.5;
 	for k = 1:9
+		fprintf("\tk = %d ... ", k);
+
 		Waz = 45*(k-1)/180*pi;
 
 		[Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4]  = FROGSprset;
@@ -236,7 +240,9 @@ for Vtemp = 1:7
 				break
 			end
 		end
-		%
+
+		fprintf("done\n");
+
 		GHP(2*Vtemp-1,k) = real(Xe(1));
 		GHP(2*Vtemp,k) = real(Xe(2));
 		%GHP(1,k) = real(Xe(1));
@@ -249,4 +255,4 @@ for Vtemp = 1:7
 	hold on;
 end
 
-fprintf('計算時間: %f sec\n', toc)
+fprintf('simulation time: %f sec\n', toc)
