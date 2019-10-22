@@ -45,11 +45,11 @@ LazDeg   = 0;          % azimuth (east=0deg / south=270deg) [deg]
 lLnchr   = 5;          % length [m]
 
 % wind
-WindModel= 2;            % model of wind speed
+WindModel= 1;            % model of wind speed
                          % 1:power model / 2:uniformity / 3:統計風
 Cdv      = 2.0;          % coefficient [-]
                          % in case of WindModel=1
-WazDeg   = 180;            % azimuth of wind [deg]
+WazDeg   = 0;            % azimuth of wind [deg]
                          % east=0deg / south=270deg
 Vwaz     = 3;            % wind speed [m/s]
 Zr       = 5;            % altitude anemometer located  [m]

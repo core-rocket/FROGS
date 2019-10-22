@@ -25,6 +25,9 @@ GHP = zeros(14,17);
 Delays = zeros(7,17);
 DELAY = csvread('DelayTime.csv');
 %Winddata = readmatrix('Winddata.csv');
+
+tic
+
 for Vtemp = 1:7
     Vwaz = 0+Vtemp*1.0;
     %Vwaz = 5.5;
@@ -245,3 +248,5 @@ plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
 %plot(GHP(1,:),GHP(2,:),'-squareb');
 hold on;
 end
+
+fprintf('計算時間: %f sec\n', toc)

@@ -30,6 +30,9 @@ Winddata = readmatrix('Winddata.csv');
 i = 1;                                  %ステップ数
 t = 0;                                  %時間
 %%%
+
+% ループ開始
+tic
 for i = 1:n                             % 1‾nまで繰り返し計算
 t = i*dt;                               % time [s]
 
@@ -295,44 +298,45 @@ legend('the','psi');
 %ylabel('Angular Velocity, [deg/s]');
 %legend('pitch (omg(2))','yaw (omg(3))');
  
+figure
+plot(log_t(1,:),real(log_alpha(1,:)),'r',log_t(1,:),real(log_bet(1,:)),'b')
+xlabel('Time, t [sec]');
+ylabel('Angle [deg]');
+legend('Angle of Attack (alpha)','Angle of Sideslip (bet)');
+ 
 %figure
-%plot(log_t(1,:),real(log_alpha(1,:)),'r',log_t(1,:),real(log_bet(1,:)),'b')
+%plot(log_t(1,:),real(log_D(1,:)),'r',log_t(1,:),real(log_N(1,:)),'b',...
+%    log_t(1,:),real(log_Y(1,:)),'g');
 %xlabel('Time, t [sec]');
-%ylabel('Angle [deg]');
-%legend('Angle of Attack (alpha)','Angle of Sideslip (bet)');
- 
-figure
-plot(log_t(1,:),real(log_D(1,:)),'r',log_t(1,:),real(log_N(1,:)),'b',...
-    log_t(1,:),real(log_Y(1,:)),'g');
-xlabel('Time, t [sec]');
-ylabel('Force [N]');
-legend('Drag (D)','Normal Force (N)','Side Force (Y)');
- 
-figure
-plot(log_t(1,:),real(log_Vab(1,:)),'r',log_t(1,:),real(log_Vab(2,:)),'b',...
-    log_t(1,:),real(log_Vab(3,:)),'g')
-xlabel('Time, t [sec]');
-ylabel('Air Speed, Va [m/s]');
-legend('Vab(1)','Vab(2)','Vab(3)');
+%ylabel('Force [N]');
+%legend('Drag (D)','Normal Force (N)','Side Force (Y)');
+
+%figure
+%plot(log_t(1,:),real(log_Vab(1,:)),'r',log_t(1,:),real(log_Vab(2,:)),'b',...
+%    log_t(1,:),real(log_Vab(3,:)),'g')
+%xlabel('Time, t [sec]');
+%ylabel('Air Speed, Va [m/s]');
+%legend('Vab(1)','Vab(2)','Vab(3)');
 
 figure
 plot3(real(log_Xe(1,:)),real(log_Xe(2,:)),real(log_Xe(3,:)));
 xlabel('東西 [m]')
 ylabel('北南 [m]')
 
-figure
-plot(log_t(1,:),real(log_Aeab(1,:)));
-xlabel('Time, t [sec]');
-ylabel('Acceleraition [m/s^2]');
-grid on
+%figure
+%plot(log_t(1,:),real(log_Aeab(1,:)));
+%xlabel('Time, t [sec]');
+%ylabel('Acceleraition [m/s^2]');
+%grid on
 
 % display
 fprintf('ver1.6：MODE#%d\n',SIMULATION)
 fprintf('風向：%ddeg，風速%dm/s\n',WazDeg,Vwaz);
+fprintf('計算時間: %f sec\n', toc)
 fprintf('下段燃焼時間：%.2fs，頂点到達時間%.2fs\n',tThrust,tmax*dt);
 fprintf('最高到達高度：%fm\n',max(log_Xe(3,:)));
 fprintf('最高対気速度：%fm/s\n',max(log_Va(1,:)));
-fprintf('ロンチャ離脱速度：%fm/s\n',max(log_Vlc(1,:)));
+fprintf('ランチクリア速度：%fm/s\n',max(log_Vlc(1,:)));
 fprintf('ダウンレンジ：%fm\n',norm(log_Xe(:,end-1)));
 fprintf('頂点大気密度: %f kg/(m^3)\n', log_rho(tmax));
 tmp = log_Va(1,:);
