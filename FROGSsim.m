@@ -283,11 +283,11 @@ end
 %ylabel('Velocity, Ve [m/s]');
 %legend('Ve(1)','Ve(2)','Ve(3)');
  
-%figure
-%plot(log_t(1,:),real(log_the(1,:)),'r',log_t(1,:),real(log_psi(1,:)),'b')
-%xlabel('Time, t [sec]');
-%ylabel('Attitude Angle [deg]');
-%legend('the','psi');
+figure
+plot(log_t(1,:),real(log_the(1,:)),'r',log_t(1,:),real(log_psi(1,:)),'b')
+xlabel('Time, t [sec]');
+ylabel('Attitude Angle [deg]');
+legend('the','psi');
  
 %figure
 %plot(log_t(1,:),real(log_omg(2,:)),'r',log_t(1,:),real(log_omg(3,:)),'b')

@@ -7,5 +7,5 @@ function [] = FROGSthrust
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global thrust mm0
 mm0 = 2.476;    %点火時下段エンジン質量[kg]
-Thrustdata = readmatrix('thrust/20190927_100hz.csv');
+Thrustdata = readmatrix('thrust/20191020_01_100hz.csv');
 thrust = Thrustdata(:,2);
