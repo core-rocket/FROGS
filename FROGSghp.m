@@ -26,17 +26,21 @@ Delays = zeros(7,17);
 DELAY = csvread('DelayTime.csv');
 %Winddata = readmatrix('Winddata.csv');
 
+all_xmax = 0.0;
+
 tic
 
 for Vtemp = 1:7
-	fprintf("Vtemp = %d\n", Vtemp);
-
 	Vwaz = 0+Vtemp*1.0;
 	%Vwaz = 5.5;
-	for k = 1:9
-		fprintf("\tk = %d ... ", k);
 
-		Waz = 45*(k-1)/180*pi;
+	fprintf("風速: %f m/s\n", Vwaz);
+
+	for k = 1:9
+		WazDeg = 45 * (k-1);
+		Waz = WazDeg*pi/180;
+
+		fprintf("    風向: %d deg ... ", WazDeg);
 
 		[Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4]  = FROGSprset;
 		IV  = [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4];
@@ -241,7 +245,12 @@ for Vtemp = 1:7
 			end
 		end
 
-		fprintf("done\n");
+		if xmax > all_xmax
+			all_xmax = xmax;
+		end
+
+		fprintf("(max altitude: %f)", xmax);
+		fprintf(" done\n");
 
 		GHP(2*Vtemp-1,k) = real(Xe(1));
 		GHP(2*Vtemp,k) = real(Xe(2));
@@ -255,4 +264,5 @@ for Vtemp = 1:7
 	hold on;
 end
 
-fprintf('simulation time: %f sec\n', toc)
+fprintf("simulation time: %f sec\n", toc)
+fprintf("max alitude: %f m\n", all_xmax);
