@@ -15,7 +15,7 @@ global Vwaz Waz S SIMULATION Dpara WazDeg HeightH
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 1=Ballistic fall 2=Retarding fall 3=Delay time
-SIMULATION  = 1;
+SIMULATION  = 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;		% parameterの読み込み
@@ -305,12 +305,12 @@ xlabel('Time, t [sec]');
 ylabel('Angle [deg]');
 legend('Angle of Attack (alpha)','Angle of Sideslip (bet)');
  
-%figure
-%plot(log_t(1,:),real(log_D(1,:)),'r',log_t(1,:),real(log_N(1,:)),'b',...
-%    log_t(1,:),real(log_Y(1,:)),'g');
-%xlabel('Time, t [sec]');
-%ylabel('Force [N]');
-%legend('Drag (D)','Normal Force (N)','Side Force (Y)');
+figure
+plot(log_t(1,:),real(log_D(1,:)),'r',log_t(1,:),real(log_N(1,:)),'b',...
+    log_t(1,:),real(log_Y(1,:)),'g');
+xlabel('Time, t [sec]');
+ylabel('Force [N]');
+legend('Drag (D)','Normal Force (N)','Side Force (Y)');
 
 %figure
 %plot(log_t(1,:),real(log_Vab(1,:)),'r',log_t(1,:),real(log_Vab(2,:)),'b',...

@@ -11,11 +11,13 @@ close all
 global l lcg0 lcgf lcgp lcp m0 mf mp0 I0 If Ip0 n
 global Cd Cnalpha Cmq Vpara1 Vpara2 Hpara lLnchr
 global WindModel dt Cdv Zr thrust tThrust g
-global S SIMULATION Dpara HeightH 
+global S SIMULATION Dpara HeightH
+
+global LeleDeg LazDeg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 3=Ballistic fall，4=Retarding fall 5=Delay time
-SIMULATION  = 4;
+SIMULATION  = 3;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
@@ -27,6 +29,21 @@ DELAY = csvread('DelayTime.csv');
 %Winddata = readmatrix('Winddata.csv');
 
 all_xmax = 0.0;
+all_nmax = 0.0;
+
+fprintf("launcher:\n");
+fprintf("  length   = %f\n", lLnchr);
+fprintf("  azimuth  = ");
+if LazDeg == 0
+	fprintf("east\n");
+elseif LazDeg == 90
+	fprintf("north\n");
+elseif LazDeg == 180
+	fprintf("west\n");
+elseif LazDeg == 270
+	fprintf("south");
+end
+fprintf("  elevation= %f\n", LeleDeg);
 
 tic
 
@@ -34,13 +51,13 @@ for Vtemp = 1:7
 	Vwaz = 0+Vtemp*1.0;
 	%Vwaz = 5.5;
 
-	fprintf("風速: %f m/s\n", Vwaz);
+	fprintf("  wind speed: %f m/s\n", Vwaz);
 
 	for k = 1:9
 		WazDeg = 45 * (k-1);
 		Waz = WazDeg*pi/180;
 
-		fprintf("    風向: %d deg ... ", WazDeg);
+		fprintf("    wind dir: %3d deg ", WazDeg);
 
 		[Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4]  = FROGSprset;
 		IV  = [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4];
@@ -51,7 +68,9 @@ for Vtemp = 1:7
 		i = 1;                                  %ステップ数
 		t = 0;                                  %時間
 		%%%
-		log_Xe    = zeros(3,n);
+		log_Xe	= zeros(3,n);
+		log_N	= zeros(1,n);
+
 		for i = 1:n                             % 1‾nまで繰り返し計算
 			t = i*dt;                               % time [s]
 			% transformation matrix(earth frame --> body frame)(座標変換行列)(地上座標系を機体座標系へ)
@@ -232,7 +251,9 @@ for Vtemp = 1:7
 			the = asin(Aeb(1,3));
 			psi = atan(Aeb(1,2)/Aeb(1,1));
 
-			log_Xe(:,i)    = Xe;
+			log_Xe(:,i)	= Xe;
+			log_N(:,i)	= N;
+
 			[xmax,tmax] = max(log_Xe(3,:));
 			tmin=size(log_Xe(3,:));
 			MP1=log_Xe(3,tmax:tmin(1,2));
@@ -248,9 +269,13 @@ for Vtemp = 1:7
 		if xmax > all_xmax
 			all_xmax = xmax;
 		end
+		nmax = abs(max(log_N));
+		if nmax > all_nmax
+			all_nmax = nmax;
+		end
 
-		fprintf("(max altitude: %f)", xmax);
-		fprintf(" done\n");
+		fprintf("altitude: %f, N: %f", xmax, nmax);
+		fprintf("\n");
 
 		GHP(2*Vtemp-1,k) = real(Xe(1));
 		GHP(2*Vtemp,k) = real(Xe(2));
@@ -266,3 +291,4 @@ end
 
 fprintf("simulation time: %f sec\n", toc)
 fprintf("max alitude: %f m\n", all_xmax);
+fprintf("max N: %f\n", all_nmax);
