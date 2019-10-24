@@ -28,6 +28,7 @@ Delays = zeros(7,17);
 DELAY = csvread('DelayTime.csv');
 %Winddata = readmatrix('Winddata.csv');
 
+max_top_vel = 0.0;
 all_xmax = 0.0;
 all_nmax = 0.0;
 
@@ -252,6 +253,7 @@ for Vtemp = 1:7
 			psi = atan(Aeb(1,2)/Aeb(1,1));
 
 			log_Xe(:,i)	= Xe;
+			log_Va(:,i)	= Va;
 			log_N(:,i)	= N;
 
 			[xmax,tmax] = max(log_Xe(3,:));
@@ -266,15 +268,21 @@ for Vtemp = 1:7
 			end
 		end
 
+		nmax	= abs(max(log_N));
+		tmp_Va	= log_Va(1,:);
+		top_vel	= tmp_Va(tmax);
+
+		if top_vel > max_top_vel
+			max_top_vel = top_vel;
+		end
 		if xmax > all_xmax
 			all_xmax = xmax;
 		end
-		nmax = abs(max(log_N));
 		if nmax > all_nmax
 			all_nmax = nmax;
 		end
 
-		fprintf("altitude: %f, N: %f", xmax, nmax);
+		fprintf("top vel=%f, altitude=%f, N=%f", top_vel, xmax, nmax);
 		fprintf("\n");
 
 		GHP(2*Vtemp-1,k) = real(Xe(1));
@@ -290,5 +298,6 @@ for Vtemp = 1:7
 end
 
 fprintf("simulation time: %f sec\n", toc)
+fprintf("max top vel: %f\n", max_top_vel);
 fprintf("max alitude: %f m\n", all_xmax);
 fprintf("max N: %f\n", all_nmax);
