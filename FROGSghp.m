@@ -29,6 +29,7 @@ DELAY = csvread('DelayTime.csv');
 %Winddata = readmatrix('Winddata.csv');
 
 max_top_vel = 0.0;
+max_para_vel= 0.0;
 all_xmax = 0.0;
 all_nmax = 0.0;
 
@@ -46,6 +47,8 @@ elseif LazDeg == 270
 end
 fprintf("  elevation= %f\n", LeleDeg);
 
+FLAG_RESTRICT = 1;
+
 tic
 
 for Vtemp = 1:7
@@ -57,6 +60,50 @@ for Vtemp = 1:7
 	for k = 1:9
 		WazDeg = 45 * (k-1);
 		Waz = WazDeg*pi/180;
+
+		if FLAG_RESTRICT == 1
+			if WazDeg == 360
+				continue;
+			end
+
+			if LeleDeg == 80
+				if WazDeg == 180 && Vtemp >= 5
+					continue;
+				elseif WazDeg == 225 && Vtemp >= 6
+					continue;
+				end
+			elseif LeleDeg == 81
+				if WazDeg == 180 && Vtemp >= 4
+					continue;
+				elseif WazDeg == 225 && Vtemp >= 5
+					continue;
+				end
+			elseif LeleDeg == 82
+				if WazDeg == 135 && Vtemp == 7
+					continue;
+				elseif WazDeg == 180 && Vtemp >= 4
+					continue;
+				elseif WazDeg == 225 && Vtemp >= 5
+					continue;
+				end
+			elseif LeleDeg == 83
+				if WazDeg == 135 && Vtemp == 7
+					continue;
+				elseif WazDeg == 180 && Vtemp >= 3
+					continue;
+				elseif WazDeg == 225 && Vtemp >= 4
+					continue;
+				end
+			elseif LeleDeg == 84 && LeleDeg == 85
+				if WazDeg == 135 && Vtemp >= 6
+					continue;
+				elseif WazDeg == 180 && Vtemp >= 3
+					continue;
+				elseif WazDeg == 225 && Vtemp >= 4
+					continue;
+				end
+			end
+		end
 
 		fprintf("    wind dir: %3d deg ", WazDeg);
 
@@ -271,9 +318,13 @@ for Vtemp = 1:7
 		nmax	= abs(max(log_N));
 		tmp_Va	= log_Va(1,:);
 		top_vel	= tmp_Va(tmax);
+		para_vel= tmp_Va(tmax+(2.5/dt));
 
 		if top_vel > max_top_vel
 			max_top_vel = top_vel;
+		end
+		if para_vel > max_para_vel
+			max_para_vel = para_vel;
 		end
 		if xmax > all_xmax
 			all_xmax = xmax;
@@ -282,7 +333,7 @@ for Vtemp = 1:7
 			all_nmax = nmax;
 		end
 
-		fprintf("top vel=%f, altitude=%f, N=%f", top_vel, xmax, nmax);
+		fprintf("para vel=%f, altitude=%f, N=%f", para_vel, xmax, nmax);
 		fprintf("\n");
 
 		GHP(2*Vtemp-1,k) = real(Xe(1));
@@ -291,13 +342,17 @@ for Vtemp = 1:7
 		%GHP(2,k) = real(Xe(2));
 		%Delays(Vtemp,k) = real(tdelay);
 	end
-	% plot
-	plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
-	%plot(GHP(1,:),GHP(2,:),'-squareb');
-	hold on;
+
+	if FLAG_RESTRICT ~= 1
+		% plot
+		plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
+		%plot(GHP(1,:),GHP(2,:),'-squareb');
+		hold on;
+	end
 end
 
 fprintf("simulation time: %f sec\n", toc)
 fprintf("max top vel: %f\n", max_top_vel);
+fprintf("max para vel: %f\n", max_para_vel);
 fprintf("max alitude: %f m\n", all_xmax);
 fprintf("max N: %f\n", all_nmax);
