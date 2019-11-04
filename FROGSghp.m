@@ -31,6 +31,9 @@ DELAY = csvread('DelayTime.csv');
 max_top_vel = 0.0;
 max_para_vel= 0.0;
 all_xmax = 0.0;
+all_xmin = 100 * 1000.0;
+all_xmax_t = 0.0;
+all_xmin_t = 0.0;
 all_nmax = 0.0;
 
 fprintf("launcher:\n");
@@ -382,6 +385,11 @@ for Vtemp = 1:7
 		end
 		if xmax > all_xmax
 			all_xmax = xmax;
+			all_xmax_t = tmax*dt;
+		end
+		if xmax < all_xmin
+			all_xmin = xmax;
+			all_xmin_t = tmax*dt;
 		end
 		if nmax > all_nmax
 			all_nmax = nmax;
@@ -406,7 +414,8 @@ for Vtemp = 1:7
 end
 
 fprintf("simulation time: %f sec\n", toc)
-fprintf("max top vel: %f\n", max_top_vel);
+fprintf("max top vel:  %f\n", max_top_vel);
 fprintf("max para vel: %f\n", max_para_vel);
-fprintf("max alitude: %f m\n", all_xmax);
-fprintf("max N: %f\n", all_nmax);
+fprintf("max alitude:  %f m (%f sec)\n", all_xmax, all_xmax_t);
+fprintf("min altitude: %f m (%f sec)\n", all_xmin, all_xmin_t);
+fprintf("max N:        %f\n", all_nmax);
