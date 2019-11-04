@@ -324,11 +324,11 @@ plot3(real(log_Xe(1,:)),real(log_Xe(2,:)),real(log_Xe(3,:)));
 xlabel('東西 [m]')
 ylabel('北南 [m]')
 
-%figure
-%plot(log_t(1,:),real(log_Aeab(1,:)));
-%xlabel('Time, t [sec]');
-%ylabel('Acceleraition [m/s^2]');
-%grid on
+figure
+plot(log_t(1,:),real(log_Aeab(1,:)));
+xlabel('Time, t [sec]');
+ylabel('Acceleraition [m/s^2]');
+grid on
 
 % display
 fprintf('ver1.6：MODE#%d\n',SIMULATION)

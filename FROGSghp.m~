@@ -17,7 +17,7 @@ global LeleDeg LazDeg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 3=Ballistic fall，4=Retarding fall 5=Delay time
-SIMULATION  = 3;
+SIMULATION  = 4;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
