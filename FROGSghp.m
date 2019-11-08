@@ -17,7 +17,7 @@ global LeleDeg LazDeg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 3=Ballistic fall，4=Retarding fall 5=Delay time
-SIMULATION  = 3;
+SIMULATION  = 4;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;        % parameterの読み込み
@@ -50,7 +50,8 @@ elseif LazDeg == 270
 end
 fprintf("  elevation= %f\n", LeleDeg);
 
-FLAG_RESTRICT = 1;
+WIND_DIR_NUM	= 16;
+FLAG_RESTRICT	= 0;
 
 tic
 
@@ -60,8 +61,8 @@ for Vtemp = 1:7
 
 	fprintf("  wind speed: %f m/s\n", Vwaz);
 
-	for k = 1:9
-		WazDeg = 45 * (k-1);
+	for k = 1:WIND_DIR_NUM
+		WazDeg = (360/(WIND_DIR_NUM-1)) * (k-1);
 		Waz = WazDeg*pi/180;
 
 		if FLAG_RESTRICT == 1
@@ -395,17 +396,20 @@ for Vtemp = 1:7
 			all_nmax = nmax;
 		end
 
-		fprintf("para vel=%f, altitude=%f, N=%f", para_vel, xmax, nmax);
-		fprintf("\n");
+		%fprintf("para vel=%f, altitude=%f, N=%f", para_vel, xmax, nmax);
 
+		fprintf("GHP: %f, %f", real(Xe(1)), real(Xe(2)));
 		GHP(2*Vtemp-1,k) = real(Xe(1));
 		GHP(2*Vtemp,k) = real(Xe(2));
 		%GHP(1,k) = real(Xe(1));
 		%GHP(2,k) = real(Xe(2));
 		%Delays(Vtemp,k) = real(tdelay);
+		fprintf("\n");
 	end
 
 	if FLAG_RESTRICT ~= 1
+		fname = sprintf("ghp-%d-%d.csv", SIMULATION, LeleDeg);
+        writematrix(GHP, fname);
 		% plot
 		plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
 		%plot(GHP(1,:),GHP(2,:),'-squareb');
