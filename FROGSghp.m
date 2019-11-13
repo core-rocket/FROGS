@@ -28,6 +28,7 @@ Delays = zeros(7,17);
 DELAY = csvread('DelayTime.csv');
 %Winddata = readmatrix('Winddata.csv');
 
+min_launchclear = 1000000.0;
 max_top_vel = 0.0;
 max_para_vel= 0.0;
 all_xmax = 0.0;
@@ -35,6 +36,7 @@ all_xmin = 100 * 1000.0;
 all_xmax_t = 0.0;
 all_xmin_t = 0.0;
 all_nmax = 0.0;
+all_max_Va = 0.0;
 
 fprintf("launcher:\n");
 fprintf("  length   = %f\n", lLnchr);
@@ -51,7 +53,7 @@ end
 fprintf("  elevation= %f\n", LeleDeg);
 
 WIND_DIR_NUM	= 16;
-FLAG_RESTRICT	= 0;
+FLAG_RESTRICT	= 1;
 
 tic
 
@@ -70,100 +72,254 @@ for Vtemp = 1:7
 				continue;
 			end
 
-			if LeleDeg == 80
-				if WazDeg == 180 && Vtemp >= 5
+			wdir = WazDeg + 180.0;	% 風が吹いていく方向->風向
+			wdir = wdir - 90.0;		% 東0deg ->北0deg
+			if wdir >= 360.0
+				wdir = wdir - 360.0;
+			end
+			
+			fprintf("    wdir = %f\n", wdir);
+
+			if wdir == 0.0
+				if Vwaz == 1 && LeleDeg > 87
 					continue;
-				elseif WazDeg == 225 && Vtemp >= 6
-					continue;
-				end
-			elseif LeleDeg == 81
-				if WazDeg == 180 && Vtemp >= 4
-					continue;
-				elseif WazDeg == 225 && Vtemp >= 5
-					continue;
-				end
-			elseif LeleDeg == 82
-				if WazDeg == 135 && Vtemp == 7
-					continue;
-				elseif WazDeg == 180 && Vtemp >= 4
-					continue;
-				elseif WazDeg == 225 && Vtemp >= 5
+				elseif Vwaz >= 2 && Vwaz <= 3 && LeleDeg > 88
 					continue;
 				end
-			elseif LeleDeg == 83
-				if WazDeg == 135 && Vtemp == 7
+			elseif wdir == 22.5
+				if LeleDeg > 87
 					continue;
-				elseif WazDeg == 180 && Vtemp >= 3
+				elseif Vwaz == 3 && LeleDeg > 86
 					continue;
-				elseif WazDeg == 225 && Vtemp >= 4
+				elseif Vwaz == 4 && LeleDeg > 85
 					continue;
-				end
-			elseif LeleDeg == 84 && LeleDeg == 85
-				if WazDeg == 135 && Vtemp >= 6
+				elseif Vwaz == 5 && LeleDeg > 84
 					continue;
-				elseif WazDeg == 180 && Vtemp >= 3
+				elseif Vwaz == 6 && LeleDeg > 83
 					continue;
-				elseif WazDeg == 225 && Vtemp >= 4
+				elseif Vwaz == 7 && LeleDeg > 82
 					continue;
 				end
-			elseif LeleDeg == 86
-				if WazDeg == 135 && Vtemp >= 4
+			elseif wdir == 45.0
+				if Vwaz > 5
 					continue;
-				elseif WazDeg == 180 && Vtemp >= 2
+				elseif Vwaz == 1 && LeleDeg > 88
 					continue;
-				elseif WazDeg == 225 && Vtemp >= 3
+				elseif Vwaz == 2 && LeleDeg > 86
 					continue;
-				end
-			elseif LeleDeg == 87
-				if WazDeg == 135 && Vtemp >= 2
+				elseif Vwaz == 3 && LeleDeg > 84
 					continue;
-				elseif WazDeg == 180 && Vtemp >= 2
+				elseif Vwaz == 4 && LeleDeg > 82
 					continue;
-				elseif WazDeg == 225 && Vtemp >= 3
-					continue;
-				elseif WazDeg == 270 && Vtemp >= 3
+				elseif Vwaz == 5 && LeleDeg > 80
 					continue;
 				end
-			elseif LeleDeg == 88
-				if WazDeg == 0 && Vtemp <= 1
+			elseif wdir == 67.5
+				if Vwaz > 4
 					continue;
-				elseif WazDeg == 45 && Vtemp <= 1
+				elseif Vwaz == 1 && LeleDeg > 87
 					continue;
-				elseif WazDeg == 90 && Vtemp <= 2
+				elseif Vwaz == 2 && LeleDeg > 85
 					continue;
-				elseif WazDeg == 135 && Vtemp <= 2
+				elseif Vwaz == 3 && LeleDeg > 82
 					continue;
-				elseif WazDeg == 180
-					continue;
-				elseif WazDeg == 225
-					continue;
-				elseif WazDeg == 270
-					continue;
-				elseif WazDeg == 315 && Vtemp <= 2
+				elseif Vwaz == 4 && LeleDeg > 80
 					continue;
 				end
-			elseif LeleDeg == 89
-				if WazDeg == 0 && Vtemp <= 2
+			elseif wdir == 90.0
+				if Vwaz > 4
 					continue;
-				elseif WazDeg == 45 && Vtemp <= 2
+				elseif Vwaz == 1 && LeleDeg > 87
 					continue;
-				elseif WazDeg == 90 && Vtemp <= 3
+				elseif Vwaz == 2 && LeleDeg > 85
 					continue;
-				elseif WazDeg == 135
+				elseif Vwaz == 3 && LeleDeg > 82
 					continue;
-				elseif WazDeg == 180
+				elseif Vwaz == 4 && LeleDeg > 80
 					continue;
-				elseif WazDeg == 220
+				end
+			elseif wdir == 112.5
+				if Vwaz > 5
 					continue;
-				elseif WazDeg == 270
+				elseif Vwaz == 1 && LeleDeg > 88
 					continue;
-				elseif WazDeg == 315 && Vtemp <= 5
+				elseif Vwaz == 2 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 84
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 82
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 80
+					continue;
+				end
+			elseif wdir == 135.0
+				if LeleDeg > 88
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 84
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 83
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 81
+					continue;
+				end
+			elseif wdir == 157.5
+				if LeleDeg > 89
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 88
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 88
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 88
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 89
+					continue;
+				end
+			elseif wdir == 180
+				if LeleDeg > 88
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 88
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 87
+					continue;
+				end
+			elseif wdir == 202.5
+				if LeleDeg > 88
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 85
+					continue;
+				end
+			elseif wdir == 225.0
+				if LeleDeg > 87
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 84
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 83
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 83
+					continue;
+				end
+			elseif wdir == 247.5
+				if LeleDeg > 87
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 83
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 83
+					continue;
+				end
+			elseif wdir == 270.0
+				if LeleDeg > 87
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 84
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 83
+					continue;
+				end
+			elseif wdir == 292.5
+				if LeleDeg > 87
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 85
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 84
+					continue;
+				end
+			elseif wdir == 315.0
+				if LeleDeg > 89
+					continue;
+				elseif Vwaz == 1 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 86
+					continue;
+				elseif Vwaz == 4 && LeleDeg == 87
+					continue;
+				elseif Vwaz == 5 && (LeleDeg == 87 || LeleDeg == 89)
+					continue;
+				elseif Vwaz == 6 && (LeleDeg == 87 || LeleDeg == 89)
+					continue;
+				elseif Vwaz == 7 && (LeleDeg == 87 || LeleDeg == 89)
+					continue;
+				end
+			elseif wdir == 337.5
+				if LeleDeg > 89
+					continue;
+				elseif Vwaz == 1 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 2 && LeleDeg > 87
+					continue;
+				elseif Vwaz == 3 && LeleDeg > 88
+					continue;
+				elseif Vwaz == 4 && LeleDeg > 89
+					continue;
+				elseif Vwaz == 5 && LeleDeg > 89
+					continue;
+				elseif Vwaz == 6 && LeleDeg > 89
+					continue;
+				elseif Vwaz == 7 && LeleDeg > 89
 					continue;
 				end
 			end
-		end
 
-		fprintf("    wind dir: %3.1f deg ", WazDeg);
+			fprintf("      ");
+		else
+			fprintf("    wind dir: %3.1f deg ", WazDeg);
+		end
 
 		[Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4]  = FROGSprset;
 		IV  = [Ve1,Ve2,Ve3,Xe1,Xe2,Xe3,omg2,omg3,q1,q2,q3,q4];
@@ -176,6 +332,8 @@ for Vtemp = 1:7
 		%%%
 		log_Xe	= zeros(3,n);
 		log_N	= zeros(1,n);
+
+		V_launchclear = 0.0;
 
 		for i = 1:n                             % 1‾nまで繰り返し計算
 			t = i*dt;                               % time [s]
@@ -297,6 +455,9 @@ for Vtemp = 1:7
 					end
 			end
 
+			Veab	= norm(Ve);		% 機速
+			Aeab	= norm(Ae);		% 機速
+
 			% coefficient
 			Kj = -(Ip0/mp0+(lcg-lcgp)^2-(l-lcg)^2)*mdot;
 			Ka = 0.5*rho*S*(Va^2)*(l^2)/2/Va*Cmq;
@@ -357,6 +518,14 @@ for Vtemp = 1:7
 			the = asin(Aeb(1,3));
 			psi = atan(Aeb(1,2)/Aeb(1,1));
 
+			% ランチクリア速度
+			if (norm(Xe) < lLnchr) && (t < tThrust)
+				Vlc = Veab(1);
+				if Vlc > V_launchclear
+					V_launchclear = Vlc;
+				end
+			end
+
 			log_Xe(:,i)	= Xe;
 			log_Va(:,i)	= Va;
 			log_N(:,i)	= N;
@@ -375,9 +544,13 @@ for Vtemp = 1:7
 
 		nmax	= abs(max(log_N));
 		tmp_Va	= log_Va(1,:);
+		max_Va  = max(tmp_Va);
 		top_vel	= tmp_Va(tmax);
 		para_vel= tmp_Va(tmax+(2.5/dt));
 
+		if V_launchclear < min_launchclear
+			min_launchclear = V_launchclear;
+		end
 		if top_vel > max_top_vel
 			max_top_vel = top_vel;
 		end
@@ -394,6 +567,10 @@ for Vtemp = 1:7
 		end
 		if nmax > all_nmax
 			all_nmax = nmax;
+		end
+
+		if max_Va > all_max_Va
+			all_max_Va = max_Va;
 		end
 
 		fprintf("para vel=%f, altitude=%f, N=%f", para_vel, xmax, nmax);
@@ -418,6 +595,8 @@ for Vtemp = 1:7
 end
 
 fprintf("simulation time: %f sec\n", toc)
+fprintf("min launch clear vel: %f\n", min_launchclear);
+fprintf("max air vel:  %f\n", all_max_Va);
 fprintf("max top vel:  %f\n", max_top_vel);
 fprintf("max para vel: %f\n", max_para_vel);
 fprintf("max alitude:  %f m (%f sec)\n", all_xmax, all_xmax_t);
