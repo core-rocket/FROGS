@@ -1,5 +1,6 @@
 #!/bin/python
 
+import sys
 import csv
 import pymap3d as pm
 import json
@@ -17,7 +18,7 @@ def enu2llh(e, n, u):
     return pm.ecef2geodetic(x, y, z)
     #print("LLH: (%f, %f, %f)" % (lat, lon, alt))
 
-with open("ghp-3-70.csv") as f:
+with open(sys.argv[1]) as f:
     ghp_js = open("ghp-output.js", "w")
     reader = csv.reader(f)
     data = [row for row in reader]
