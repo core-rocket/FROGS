@@ -37,7 +37,7 @@ Cnalpha		= PMT(12);			% normal force coefficient
 Vpara1		= PMT(13);			% falling velocity of 1st parachute [m/s]
 Vpara2		= PMT(14);			% falling velocity of 2nd parachute[m/s]
 Hpara		= 0;				% 2nd parachute's deployment altitude  [m]
-Dpara		= 2.5;				% para delay [s]
+Dpara		= 0.0;				% para delay [s]
 
 % launcher
 LeleDeg		= 70;				% angle of elevation (vertical=90deg) [deg]
