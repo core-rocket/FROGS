@@ -53,7 +53,7 @@ end
 fprintf("  elevation= %f\n", LeleDeg);
 
 WIND_DIR_NUM	= 16;
-FLAG_RESTRICT	= 1;
+FLAG_RESTRICT	= 0;
 
 tic
 

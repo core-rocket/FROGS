@@ -41,7 +41,7 @@ Dpara		= 2.5;				% para delay [s]
 
 % launcher
 LeleDeg		= 70;				% angle of elevation (vertical=90deg) [deg]
-LazDeg		= 150-90;				% azimuth (east=0deg / south=270deg) [deg]
+LazDeg		= (360-150)+90;				% azimuth (east=0deg / south=270deg) [deg]
 lLnchr		= 5;				% length [m]
 
 % wind
