@@ -15,7 +15,7 @@ global Vwaz Waz S SIMULATION Dpara WazDeg HeightH
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Choose the type of simulation(弾道or減速)
 %%% 1=Ballistic fall 2=Retarding fall 3=Delay time
-SIMULATION  = 2;
+SIMULATION  = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FROGSparameters;		% parameterの読み込み

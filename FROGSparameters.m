@@ -40,8 +40,8 @@ Hpara		= 0;				% 2nd parachute's deployment altitude  [m]
 Dpara		= 2.5;				% para delay [s]
 
 % launcher
-LeleDeg		= 89;				% angle of elevation (vertical=90deg) [deg]
-LazDeg		= 0;				% azimuth (east=0deg / south=270deg) [deg]
+LeleDeg		= 70;				% angle of elevation (vertical=90deg) [deg]
+LazDeg		= 150-90;				% azimuth (east=0deg / south=270deg) [deg]
 lLnchr		= 5;				% length [m]
 
 % wind
