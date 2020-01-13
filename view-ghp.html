@@ -31,6 +31,14 @@ var ok_region_sea = L.circle([34.661857, 139.454987], {
 	fillOpacity: 0.1,
 }).addTo(map);
 
+var ok_region_sea_line = L.polyline([
+	[34.684392, 139.454677],
+	[34.667917, 139.428718]
+],{
+	color: 'yellow',
+	weight: 3.0
+}).addTo(map);
+
 var ok_region_land = L.polygon([
 	[34.735715, 139.420922],
 	[34.731750, 139.421719],
