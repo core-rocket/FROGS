@@ -17,7 +17,7 @@ def enu2llh(e, n, u):
     x,y,z = pm.enu2ecef(e, n, u, launch_lat, launch_lon, launch_alt)
     ret = pm.ecef2geodetic(x, y, z)
     lat,lon,alt = ret
-    print("ENU(%f, %f, %f) => LLH(%f, %f, %f)" % (x, y, z, lat, lon, alt))
+    print("ENU(%f, %f, %f) => LLH(%f, %f, %f)" % (e, n, u, lat, lon, alt))
     return ret
 
 def csv2js(f):
@@ -35,6 +35,7 @@ def csv2js(f):
         cases = data[wspeed]
         output += "var ghp_%d = L.polygon([\n" % int(wspeed)
         for case in cases:
+            #print(case)
             lat,lon,alt = enu2llh(case["ghp_x"], case["ghp_y"], 0.0)
             output += "\t[%f, %f],\n" % (lat, lon)
         output += "],{\n"
