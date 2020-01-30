@@ -53,6 +53,10 @@ end
 fprintf("  elevation= %f\n", LeleDeg);
 
 WIND_DIR_NUM	= 16;
+	
+ghp_fname = sprintf("ghp-%d-%d.csv", SIMULATION, LeleDeg);
+ghp_file = fopen(ghp_fname, 'w');
+fprintf(ghp_file, "wspeed, wdir, ghp_x, ghp_y\n");
 
 tic
 
@@ -323,6 +327,9 @@ for Vtemp = 1:7
 		fprintf("para vel=%f, altitude=%f, N=%f", para_vel, xmax, nmax);
 
 		%fprintf("GHP: %f, %f", real(Xe(1)), real(Xe(2)));
+
+		fprintf(ghp_file, "%f, %f, %f, %f\n", Vwaz, WazDeg, real(Xe(1)), real(Xe(2)));
+
 		GHP(2*Vtemp-1,k) = real(Xe(1));
 		GHP(2*Vtemp,k) = real(Xe(2));
 		%GHP(1,k) = real(Xe(1));
@@ -332,8 +339,8 @@ for Vtemp = 1:7
 	end
 
 	% save GHP data
-	fname = sprintf("ghp-%d-%d.csv", SIMULATION, LeleDeg);
-	writematrix(GHP, fname);
+	% fname = sprintf("ghp-%d-%d.csv", SIMULATION, LeleDeg);
+	% writematrix(GHP, fname);
 	
 	% plot
 	plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
@@ -349,3 +356,5 @@ fprintf("max para vel: %f\n", max_para_vel);
 fprintf("max alitude:  %f m (%f sec)\n", all_xmax, all_xmax_t);
 fprintf("min altitude: %f m (%f sec)\n", all_xmin, all_xmin_t);
 fprintf("max N:        %f\n", all_nmax);
+
+fclose(ghp_file);
