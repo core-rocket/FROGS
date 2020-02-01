@@ -20,8 +20,7 @@ def enu2llh(e, n, u):
     print("ENU(%f, %f, %f) => LLH(%f, %f, %f)" % (e, n, u, lat, lon, alt))
     return ret
 
-def csv2js(f):
-    output = ""
+def read_ghp(f):
     reader = csv.DictReader(f, skipinitialspace=True)
     data = {}
     for row in reader:
@@ -30,7 +29,10 @@ def csv2js(f):
         if not wspeed in data.keys():
             data[wspeed] = []
         data[wspeed].append(case)
+    return data
 
+def ghp2js(data):
+    output = ""
     for wspeed in data.keys():
         cases = data[wspeed]
         output += "var ghp_%d = L.polygon([\n" % int(wspeed)
@@ -47,6 +49,7 @@ def csv2js(f):
     return output
 
 with open(sys.argv[1]) as f:
-    js = csv2js(f)
+    ghp = read_ghp(f)
+    js = ghp2js(ghp)
     ghp_js = open("ghp-output.js", "w")
     ghp_js.write(js)
