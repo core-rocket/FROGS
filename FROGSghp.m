@@ -328,7 +328,11 @@ for Vtemp = 1:7
 
 		%fprintf("GHP: %f, %f", real(Xe(1)), real(Xe(2)));
 
-		fprintf(ghp_file, "%f, %f, %f, %f, %f\n", Vwaz, WazDeg, real(Xe(1)), real(Xe(2)), xmax);
+		wind_deg = (90.0-WazDeg)+360.0;
+		if wind_deg > 360.0
+			wind_deg = wind_deg - 360.0;
+		end
+		fprintf(ghp_file, "%f, %f, %f, %f, %f\n", Vwaz, wind_deg, real(Xe(1)), real(Xe(2)), xmax);
 
 		GHP(2*Vtemp-1,k) = real(Xe(1));
 		GHP(2*Vtemp,k) = real(Xe(2));
