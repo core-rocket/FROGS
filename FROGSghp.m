@@ -56,7 +56,7 @@ WIND_DIR_NUM	= 16;
 	
 ghp_fname = sprintf("ghp-%d-%d.csv", SIMULATION, LeleDeg);
 ghp_file = fopen(ghp_fname, 'w');
-fprintf(ghp_file, "wspeed, wdir, ghp_x, ghp_y\n");
+fprintf(ghp_file, "wspeed, wdir, ghp_e, ghp_n, max_altitude\n");
 
 tic
 
@@ -328,7 +328,7 @@ for Vtemp = 1:7
 
 		%fprintf("GHP: %f, %f", real(Xe(1)), real(Xe(2)));
 
-		fprintf(ghp_file, "%f, %f, %f, %f\n", Vwaz, WazDeg, real(Xe(1)), real(Xe(2)));
+		fprintf(ghp_file, "%f, %f, %f, %f, %f\n", Vwaz, WazDeg, real(Xe(1)), real(Xe(2)), xmax);
 
 		GHP(2*Vtemp-1,k) = real(Xe(1));
 		GHP(2*Vtemp,k) = real(Xe(2));

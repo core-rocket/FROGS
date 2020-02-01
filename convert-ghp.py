@@ -26,7 +26,7 @@ def csv2js(f):
     data = {}
     for row in reader:
         wspeed = float(row["wspeed"])
-        case = {"wdir": float(row["wdir"]), "ghp_x": float(row["ghp_x"]), "ghp_y": float(row["ghp_y"])}
+        case = {"wdir": float(row["wdir"]), "ghp_e": float(row["ghp_e"]), "ghp_n": float(row["ghp_n"])}
         if not wspeed in data.keys():
             data[wspeed] = []
         data[wspeed].append(case)
@@ -36,10 +36,10 @@ def csv2js(f):
         output += "var ghp_%d = L.polygon([\n" % int(wspeed)
         for case in cases:
             #print(case)
-            lat,lon,alt = enu2llh(case["ghp_x"], case["ghp_y"], 0.0)
+            lat,lon,alt = enu2llh(case["ghp_e"], case["ghp_n"], 0.0)
             output += "\t[%f, %f],\n" % (lat, lon)
         output += "],{\n"
-        output += "\tcolor: 'red',\n"
+        output += "\tcolor: 'blue',\n"
         output += "\tfillOpacity: 0.0\n"
         output += "}).addTo(map);\n\n"
 
