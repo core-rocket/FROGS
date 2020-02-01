@@ -22,6 +22,13 @@ def enu2llh(e, n, u):
     print("ENU(%f, %f, %f) => LLH(%f, %f, %f)" % (e, n, u, lat, lon, alt))
     return ret
 
+def llh2enu(lat, lon, alt):
+    x,y,z = pm.geodetic2ecef(lat, lon, alt)
+    ret = pm.ecef2enu(x, y, z, launch_lat, launch_lon, launch_alt)
+    e,n,u = ret
+    print("LLH(%f, %f, %f) => ENU(%f, %f, %f)" % (lat,lon,alt, e,n,u))
+    return ret
+
 def read_ghp(f):
     reader = csv.DictReader(f, skipinitialspace=True)
     data = {}
@@ -39,6 +46,8 @@ def ghp2js(data):
         cases = data[wspeed]
         output += "var ghp_%d = L.polygon([\n" % int(wspeed)
         for case in cases:
+            if case["restrict_region"] == False:
+                continue
             #print(case)
             lat,lon,alt = enu2llh(case["ghp_e"], case["ghp_n"], 0.0)
             output += "\t[%f, %f],\n" % (lat, lon)
@@ -57,8 +66,21 @@ def check_restrict(ghp):
         for case in cases:
             check_case(case)
 
+def check_region(e, n, u):
+    ce,cn,cu = llh2enu(34.661857, 139.454987, 0.0)
+    cr = 2500
+    if (e-ce)*(e-ce) + (n-cn)*(n-cn) >= (cr*cr):
+        return False
+    p1e,p1n,p1u = llh2enu(34.684392, 139.454677, 0.0)
+    p2e,p2n,p2u = llh2enu(34.667917, 139.428718, 0.0)
+
+    if ((p2e-p1e)*(n-p1n) + (p2n-p1n)*(p1e-e)) * ((p2e-p1e)*(cn-p1n) + (p2n-p1n)*(p1e-ce)) > 0:
+        return True
+    return False
+
 def check_case(case):
     case["restrict_altitude"] = (case["max_altitude"] < RESTRICT_ALTITUDE)
+    case["restrict_region"] = check_region(case["ghp_e"], case["ghp_n"], 0.0)
 
 def show_restrict_table(ghp):
     print("| 風向風速 |", end="")
@@ -84,6 +106,8 @@ def show_restrict_table(ghp):
                     output = "不可("
                     if case["restrict_altitude"] == False:
                         output += "高度)"
+                    elif case["restrict_region"] == False:
+                        output += "領域)"
                     else:
                         output = ""
                     output += " |"
