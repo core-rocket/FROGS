@@ -5,6 +5,8 @@ import csv
 import pymap3d as pm
 import json
 
+RM_RESTRICT_POINT = False
+
 RESTRICT_ALTITUDE = 914.0
 
 launch_lat = 34.679730
@@ -46,7 +48,7 @@ def ghp2js(data):
         cases = data[wspeed]
         output += "var ghp_%d = L.polygon([\n" % int(wspeed)
         for case in cases:
-            if case["restrict_region"] == False:
+            if RM_RESTRICT_POINT and case["restrict_region"] == False:
                 continue
             #print(case)
             lat,lon,alt = enu2llh(case["ghp_e"], case["ghp_n"], 0.0)
