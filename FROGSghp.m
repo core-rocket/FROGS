@@ -324,7 +324,8 @@ for Vtemp = 1:7
 			all_max_Va = max_Va;
 		end
 
-		fprintf("para vel=%f, altitude=%f, N=%f", para_vel, xmax, nmax);
+		fprintf("\n      altitude=%f (%f s), N(max)=%f\n", xmax, tmax*dt, nmax)
+		fprintf("      vel(max)=%f, vel(top)=%f, vel(para)=%f", max_Va, top_vel, para_vel);
 
 		%fprintf("GHP: %f, %f", real(Xe(1)), real(Xe(2)));
 
