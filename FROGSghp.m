@@ -343,9 +343,9 @@ for Vtemp = 1:7
 	% writematrix(GHP, fname);
 	
 	% plot
-	plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
+	%plot(GHP(2*Vtemp-1,:),GHP(2*Vtemp,:),'-squareb');
 	%plot(GHP(1,:),GHP(2,:),'-squareb');
-	hold on;
+	%hold on;
 end
 
 fprintf("simulation time: %f sec\n", toc)
