@@ -17,6 +17,8 @@ e = 0.0
 n = 0.0
 u = 0.0
 
+max_altitude_case = {"max_altitude": 0.0}
+
 def enu2llh(e, n, u):
     x,y,z = pm.enu2ecef(e, n, u, launch_lat, launch_lon, launch_alt)
     ret = pm.ecef2geodetic(x, y, z)
@@ -66,7 +68,7 @@ def check_restrict(ghp):
         cases = ghp[wspeed]
         print("check %f m/s..." % wspeed)
         for case in cases:
-            check_case(case)
+            check_case(wspeed, case)
 
 def check_region(e, n, u):
     ce,cn,cu = llh2enu(34.661857, 139.454987, 0.0)
@@ -80,9 +82,21 @@ def check_region(e, n, u):
         return True
     return False
 
-def check_case(case):
-    case["restrict_altitude"] = (case["max_altitude"] < RESTRICT_ALTITUDE)
-    case["restrict_region"] = check_region(case["ghp_e"], case["ghp_n"], 0.0)
+def check_case(wspeed, case):
+    r_alt = (case["max_altitude"] < RESTRICT_ALTITUDE)
+    r_reg = check_region(case["ghp_e"], case["ghp_n"], 0.0)
+    case["restrict_altitude"] = r_alt
+    #(case["max_altitude"] < RESTRICT_ALTITUDE)
+    case["restrict_region"] = r_reg
+    #check_region(case["ghp_e"], case["ghp_n"], 0.0)
+
+    if r_alt and r_reg:
+        global max_altitude_case
+        if case["max_altitude"] > max_altitude_case["max_altitude"]:
+            max_altitude_case = {"wspeed": wspeed}
+            max_altitude_case.update(case)
+        return True
+    return False
 
 def show_restrict_table(ghp):
     print("| 風向風速 |", end="")
@@ -125,3 +139,5 @@ with open(sys.argv[1]) as f:
     ghp_js.write(js)
 
     show_restrict_table(ghp)
+
+    print("max altitude case: ", max_altitude_case)
