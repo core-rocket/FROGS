@@ -37,7 +37,7 @@ q		= [lambda(1)*sin(THE/2);
 			lambda(2)*sin(THE/2);
 			lambda(3)*sin(THE/2);
 			cos(THE/2)];
-Xe		= [0;0;0];
+Xe		= [0;0;10];
 Ve		= [0;0;0];
 omg		= [0;0;0];
 
