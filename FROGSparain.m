@@ -31,4 +31,4 @@ global PMT
 %12.50
 %];
 
-PMT = readmatrix('LIATRIS20200126.txt')
+PMT = readmatrix('LARKSPURXP20200207.txt')
