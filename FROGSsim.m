@@ -31,6 +31,9 @@ Winddata= readmatrix('Winddata.csv');
 i = 1;		%ステップ数
 t = 0;		%時間
 
+Va_max = 0.0;
+machnum_max = 0.0;
+
 % ループ開始
 tic
 for i = 1:n									% 1‾nまで繰り返し計算
@@ -64,6 +67,7 @@ for i = 1:n									% 1‾nまで繰り返し計算
 	r0=6356766;
 	H = (r0*Xe(3)*0.001)/(r0+Xe(3)*0.001);		% ジオポテンシャル高度
 	Temp = 15 - 6.5*H;
+	vel_sound = sqrt(1.403 * 8.314462 * (273.15+Temp) / 0.028966 );
 	P =101325 * (288.15./(Temp +273.15)).^(-5.256);
 	rho = (0.0034837*P)/(Temp+273.15);			% Don't use this equation over 11km
 
@@ -105,6 +109,11 @@ for i = 1:n									% 1‾nまで繰り返し計算
 	Va		= norm(Vab);
 	% Ve:地球座標系(earth frame)における機体速度ベクトル
 	% Vw:地球座標系(earth frame)における風速ベクトル 
+
+	if Va_max < Va
+		Va_max = Va;
+		machnum_max = Va / vel_sound;
+	end
 
 	% angle of attack & angle of sideslip(迎角&横滑り角)
 	% alpha = asin(Vab(3)/Va);
@@ -336,7 +345,8 @@ fprintf('風向：%ddeg，風速%dm/s\n',WazDeg,Vwaz);
 fprintf('計算時間: %f sec\n', toc)
 fprintf('下段燃焼時間：%.2fs，頂点到達時間%.2fs\n',tThrust,tmax*dt);
 fprintf('最高到達高度：%fm\n',max(log_Xe(3,:)));
-fprintf('最高対気速度：%fm/s\n',max(log_Va(1,:)));
+fprintf('最高対気速度：%fm/s\n',Va_max);
+fprintf('最大マッハ数：%f\n', machnum_max);
 fprintf('ランチクリア速度：%fm/s\n',max(log_Vlc(1,:)));
 fprintf('ダウンレンジ：%fm\n',norm(log_Xe(:,end-1)));
 fprintf('頂点大気密度: %f kg/(m^3)\n', log_rho(tmax));

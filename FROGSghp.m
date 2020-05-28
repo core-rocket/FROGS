@@ -37,6 +37,7 @@ all_xmax_t = 0.0;
 all_xmin_t = 0.0;
 all_nmax = 0.0;
 all_max_Va = 0.0;
+all_max_machnum = 0.0;
 
 fprintf("launcher:\n");
 fprintf("  length   = %f\n", lLnchr);
@@ -85,6 +86,7 @@ for Vtemp = 1:7
 		log_N	= zeros(1,n);
 
 		V_launchclear = 0.0;
+		max_Va = 0.0;
 
 		for i = 1:n                             % 1‾nまで繰り返し計算
 			t = i*dt;                               % time [s]
@@ -115,6 +117,7 @@ for Vtemp = 1:7
 			r0=6356766;
 			H = (r0*Xe(3)*0.001)/(r0+Xe(3)*0.001);		% ジオポテンシャル高度
 			Temp = 15 - 6.5*H;
+			vel_sound = sqrt(1.403 * 8.314462 * (273.15+Temp) / 0.028966 );
 			P =101325 * (288.15./(Temp +273.15)).^(-5.256);
 			rho = (0.0034837*P)/(Temp+273.15);			% Don't use this equation over 11km
 
@@ -155,6 +158,11 @@ for Vtemp = 1:7
 			Va = norm(Vab);
 			% Ve:地球座標系(earth frame)における機体速度ベクトル
 			% Vw:地球座標系(earth frame)における風速ベクトル 
+
+			if max_Va < Va
+				max_Va = Va;
+				max_machnum = Va / vel_sound;
+			end
 
 			% angle of attack & angle of sideslip(迎角&横滑り角)
 			alpha = asin(Vab(3)/Va);
@@ -295,7 +303,7 @@ for Vtemp = 1:7
 
 		nmax	= abs(max(log_N));
 		tmp_Va	= log_Va(1,:);
-		max_Va  = max(tmp_Va);
+		% max_Va  = max(tmp_Va);
 		top_vel	= tmp_Va(tmax);
 		para_vel= tmp_Va(tmax+(2.5/dt));
 
@@ -322,6 +330,7 @@ for Vtemp = 1:7
 
 		if max_Va > all_max_Va
 			all_max_Va = max_Va;
+			all_max_machnum = max_machnum;
 		end
 
 		fprintf("\n      altitude=%f (%f s), N(max)=%f\n", xmax, tmax*dt, nmax)
@@ -363,7 +372,7 @@ end
 
 fprintf("simulation time: %f sec\n", toc)
 fprintf("min launch clear vel: %f\n", min_launchclear);
-fprintf("max air vel:  %f\n", all_max_Va);
+fprintf("max air vel:  %f ( Mach = %f )\n", all_max_Va, all_max_machnum);
 fprintf("max top vel:  %f\n", max_top_vel);
 fprintf("max para vel: %f\n", max_para_vel);
 fprintf("max alitude:  %f m (%f sec)\n", all_xmax, all_xmax_t);
