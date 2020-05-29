@@ -38,6 +38,7 @@ all_xmin_t = 0.0;
 all_nmax = 0.0;
 all_max_Va = 0.0;
 all_max_machnum = 0.0;
+all_max_downrange = 0.0;
 
 fprintf("launcher:\n");
 fprintf("  length   = %f\n", lLnchr);
@@ -358,6 +359,11 @@ for Vtemp = 1:7
 		%GHP(2,k) = real(Xe(2));
 		%Delays(Vtemp,k) = real(tdelay);
 		fprintf("\n");
+
+		downrange = sqrt(real(Xe(1))*real(Xe(1)) + real(Xe(2))*real(Xe(2)));
+		if all_max_downrange < downrange
+			all_max_downrange = downrange;
+		end
 	end
 
 	% save GHP data
@@ -377,6 +383,7 @@ fprintf("max top vel:  %f\n", max_top_vel);
 fprintf("max para vel: %f\n", max_para_vel);
 fprintf("max alitude:  %f m (%f sec)\n", all_xmax, all_xmax_t);
 fprintf("min altitude: %f m (%f sec)\n", all_xmin, all_xmin_t);
+fprintf("max down range: %f m\n", all_max_downrange);
 fprintf("max N:        %f\n", all_nmax);
 
 fclose(ghp_file);
