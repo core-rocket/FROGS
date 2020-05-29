@@ -4,6 +4,7 @@ import sys
 import csv
 import pymap3d as pm
 import json
+import simplekml
 
 RM_RESTRICT_POINT = False
 
@@ -130,6 +131,22 @@ def show_restrict_table(ghp):
                     print(output, end="")
         print("")
 
+def write_kml(ghp):
+    kml = simplekml.Kml()
+    for wspeed in ghp.keys():
+        lname = str(wspeed) + "m/s"
+        line = kml.newlinestring(name=lname)
+        line.style.linestyle.color = simplekml.Color.blue
+        line.style.linestyle.width = 8
+        line.extrude = 1
+        line.altitudemode = simplekml.AltitudeMode.absolute
+        points = []
+        for case in ghp[wspeed]:
+            llh = enu2llh(case["ghp_e"], case["ghp_n"], 0.0)
+            points.append((llh[1], llh[0], llh[2]))
+        line.coords = points
+    kml.save("output.kml")
+
 with open(sys.argv[1]) as f:
     ghp = read_ghp(f)
     check_restrict(ghp)
@@ -139,5 +156,7 @@ with open(sys.argv[1]) as f:
     ghp_js.write(js)
 
     show_restrict_table(ghp)
+
+    write_kml(ghp)
 
     print("max altitude case: ", max_altitude_case)
