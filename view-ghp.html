@@ -23,15 +23,15 @@ var map = L.map('map');
 L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', {
   attribution: "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>"
 }).addTo(map);
-map.setView([34.661857, 139.454987], 14);
+map.setView([40.242865, 140.010450], 13);
 
-var ok_region_sea = L.circle([34.661857, 139.454987], {
+var oshima_ok_region_sea = L.circle([34.661857, 139.454987], {
 	radius: 2500,
 	color: 'yellow',
 	fillOpacity: 0.1,
 }).addTo(map);
 
-var ok_region_sea_line = L.polyline([
+var oshima_ok_region_sea_line = L.polyline([
 	[34.684392, 139.454677],
 	[34.667917, 139.428718]
 ],{
@@ -39,7 +39,7 @@ var ok_region_sea_line = L.polyline([
 	weight: 3.0
 }).addTo(map);
 
-var ok_region_land = L.polygon([
+var oshima_ok_region_land = L.polygon([
 	[34.735715, 139.420922],
 	[34.731750, 139.421719],
 	[34.733287, 139.424590],
@@ -53,32 +53,38 @@ var ok_region_land = L.polygon([
 }
 ).addTo(map);
 
-var launch = L.circle([34.679730, 139.438373], {
+var oshima_launch = L.circle([34.679730, 139.438373], {
 	radius: 50,
 	color: 'blue',
 	fillOpacity: 0.5,
 }).addTo(map);
 
-var control = L.circle([34.735390, 139.421377], {
+var oshima_control = L.circle([34.735390, 139.421377], {
 	radius: 50,
 	color: 'red',
 	fillOpacity: 0.5,
 }).addTo(map);
 
-var human = L.circle([34.731230, 139.423150], {
+var oshima_human = L.circle([34.731230, 139.423150], {
 	radius: 50,
 	color: 'red',
 	fillOpacity: 0.5,
 }).addTo(map);
 
-var launch_point_sea = L.marker([34.679730, 139.438373]).addTo(map);
-launch_point_sea.bindPopup("<p>海打ち射点</p>");
+var oshima_launch_point_sea = L.marker([34.679730, 139.438373]).addTo(map);
+oshima_launch_point_sea.bindPopup("<p>海打ち射点</p>");
 
-var launch_point_land = L.marker([34.735972, 139.420944]).addTo(map);
-launch_point_land.bindPopup("<p>陸打ち射点</p>");
+var oshima_launch_point_land = L.marker([34.735972, 139.420944]).addTo(map);
+oshima_launch_point_land.bindPopup("<p>陸打ち射点</p>");
 
-var recover_point = L.marker([34.736734, 139.421677]).addTo(map);
-recover_point.bindPopup("<p>回収地点</p>");
+var oshima_recover_point = L.marker([34.736734, 139.421677]).addTo(map);
+oshima_recover_point.bindPopup("<p>回収地点</p>");
+
+var noshiro_launch_point_sea = L.marker([40.242865, 140.010450]).addTo(map);
+noshiro_launch_point_sea.bindPopup("<p>海打ち射点</p>");
+
+var noshiro_launch_point_land = L.marker([40.138633, 139.984850]).addTo(map);
+noshiro_launch_point_land.bindPopup("<p>陸打ち射点</p>");
 </script>
 <script type="text/javascript" src="ghp-output.js"></script>
 </body>

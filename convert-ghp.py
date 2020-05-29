@@ -7,11 +7,11 @@ import json
 
 RM_RESTRICT_POINT = False
 
-RESTRICT_ALTITUDE = 900.0
+RESTRICT_ALTITUDE = 3000.0
 
-launch_lat = 34.679730
-launch_lon = 139.438373
-launch_alt = 39.4422
+launch_lat = 40.242865
+launch_lon = 140.010450
+launch_alt = 0.0
 
 e = 0.0
 n = 0.0
