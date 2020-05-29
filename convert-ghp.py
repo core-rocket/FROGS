@@ -45,7 +45,7 @@ def read_ghp(f):
         data[wspeed].append(case)
     return data
 
-def ghp2js(data):
+def ghp2js(data, color):
     output = ""
     for wspeed in data.keys():
         cases = data[wspeed]
@@ -57,7 +57,7 @@ def ghp2js(data):
             lat,lon,alt = enu2llh(case["ghp_e"], case["ghp_n"], 0.0)
             output += "\t[%f, %f],\n" % (lat, lon)
         output += "],{\n"
-        output += "\tcolor: 'blue',\n"
+        output += "\tcolor: '" + color + "',\n"
         output += "\tfillOpacity: 0.0\n"
         output += "}).addTo(map);\n\n"
 
@@ -131,12 +131,16 @@ def show_restrict_table(ghp):
                     print(output, end="")
         print("")
 
-def write_kml(ghp):
+def write_kml(ghp, color):
     kml = simplekml.Kml()
     for wspeed in ghp.keys():
         lname = str(wspeed) + "m/s"
         line = kml.newlinestring(name=lname)
-        line.style.linestyle.color = simplekml.Color.blue
+        if color == "blue":
+            c = simplekml.Color.blue
+        elif color == "red":
+            c = simplekml.Color.red
+        line.style.linestyle.color = c
         line.style.linestyle.width = 8
         line.extrude = 1
         line.altitudemode = simplekml.AltitudeMode.absolute
@@ -151,12 +155,12 @@ with open(sys.argv[1]) as f:
     ghp = read_ghp(f)
     check_restrict(ghp)
 
-    js = ghp2js(ghp)
+    js = ghp2js(ghp, sys.argv[2])
     ghp_js = open("ghp-output.js", "w")
     ghp_js.write(js)
 
     show_restrict_table(ghp)
 
-    write_kml(ghp)
+    write_kml(ghp, sys.argv[2])
 
     print("max altitude case: ", max_altitude_case)
