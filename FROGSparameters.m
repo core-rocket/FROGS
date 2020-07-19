@@ -55,7 +55,7 @@ WazDeg		= 0;				% azimuth of wind [deg]
 Vwaz		= 3;				% wind speed [m/s]
 Zr			= 5;				% altitude anemometer located  [m]
 
-HeightH		= 90;				%風データ最低高度[m]
+HeightH		= 112;				%風データ最低高度[m]
 
 % simulation
 dt			= 0.01;				% simulation step [s]

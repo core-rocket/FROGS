@@ -26,7 +26,7 @@ FROGSthrust;            % thrustデータの読み込み
 GHP = zeros(14,17);
 Delays = zeros(7,17);
 DELAY = csvread('DelayTime.csv');
-%Winddata = readmatrix('Winddata.csv');
+Winddata = readmatrix('Winddata.csv');
 
 min_launchclear = 1000000.0;
 max_top_vel = 0.0;
