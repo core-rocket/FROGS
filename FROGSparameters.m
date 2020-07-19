@@ -45,7 +45,7 @@ LazDeg		= (360-300)+90;				% azimuth (east=0deg / south=270deg) [deg]
 lLnchr		= 5;				% length [m]
 
 % wind
-WindModel	= 1;				% model of wind speed
+WindModel	= 3;				% model of wind speed
 								% 1:power model / 2:uniformity / 3:統計風
 Cdv      	= 6.0;				% coefficient [-]
 								% in case of WindModel=1

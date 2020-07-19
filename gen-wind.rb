@@ -55,3 +55,4 @@ while true
   puts "#{x},#{y}"
   height = height + 1
 end
+STDERR.puts "max height: #{height}"
